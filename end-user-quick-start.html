@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>End User Quick Start - Agentic SDLC Platform Training</title>
+    <style>
+        /* North Highland Brand Colors and Styling */
+        :root {
+            --nh-primary-blue: #003366;
+            --nh-secondary-blue: #0066CC;
+            --nh-accent-orange: #FF6600;
+            --nh-light-gray: #F5F5F5;
+            --nh-dark-gray: #333333;
+            --nh-text-color: #2C2C2C;
+            --success-green: #28a745;
+            --warning-yellow: #ffc107;
+            --danger-red: #dc3545;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;900&display=swap');
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #1a1a1a;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .presentation-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 0.75rem 2rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 2000;
+            overflow: hidden;
+            height: 60px;
+            display: flex;
+            align-items: center;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -50%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+            transform: skewX(-25deg);
+            animation: shimmer 8s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) skewX(-25deg); }
+            100% { transform: translateX(100%) skewX(-25deg); }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .presentation-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: -0.5px;
+        }
+
+        .badge {
+            background: var(--nh-accent-orange);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+
+        /* Main Content Area */
+        .main-content {
+            margin-top: 60px;
+            min-height: calc(100vh - 60px);
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            background: var(--nh-light-gray);
+            border-bottom: 2px solid #DDD;
+            position: sticky;
+            top: 60px;
+            z-index: 100;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+        }
+
+        .nav-tab {
+            padding: 20px 30px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--nh-primary-blue);
+            position: relative;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .nav-tab:hover {
+            background: rgba(0, 102, 204, 0.1);
+        }
+
+        .nav-tab.active {
+            color: var(--nh-accent-orange);
+            background: white;
+        }
+
+        .nav-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--nh-accent-orange);
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+            padding: 40px;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Typography */
+        .section-title {
+            font-size: 2.5em;
+            color: var(--nh-primary-blue);
+            margin-bottom: 20px;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .subsection-title {
+            font-size: 1.8em;
+            color: var(--nh-secondary-blue);
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        /* Cards and Features */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .feature-card {
+            background: var(--nh-light-gray);
+            padding: 25px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-color: var(--nh-accent-orange);
+        }
+
+        .feature-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        .feature-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: var(--nh-primary-blue);
+            margin-bottom: 10px;
+        }
+
+        /* Code Blocks */
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        .code-block code {
+            white-space: pre;
+        }
+
+        /* Step by Step Guide */
+        .step-guide {
+            background: linear-gradient(to right, var(--nh-light-gray), white);
+            padding: 30px;
+            border-radius: 10px;
+            margin: 30px 0;
+            border-left: 5px solid var(--nh-accent-orange);
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: var(--nh-accent-orange);
+            color: white;
+            font-weight: bold;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+
+        .step-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: var(--nh-primary-blue);
+            margin-bottom: 10px;
+        }
+
+        /* Tips and Notes */
+        .tip-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-left: 4px solid var(--success-green);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border-left: 4px solid var(--warning-yellow);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .danger-box {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            border-left: 4px solid var(--danger-red);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        /* Interactive Examples */
+        .example-container {
+            background: #f8f9fa;
+            border: 2px dashed var(--nh-secondary-blue);
+            padding: 30px;
+            border-radius: 10px;
+            margin: 30px 0;
+        }
+
+        .example-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: var(--nh-secondary-blue);
+            margin-bottom: 15px;
+        }
+
+        /* Quick Reference Cards */
+        .quick-ref-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .quick-ref-card {
+            background: white;
+            border: 2px solid var(--nh-light-gray);
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .quick-ref-card:hover {
+            border-color: var(--nh-accent-orange);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Command Palette */
+        .command-palette {
+            background: #2d2d2d;
+            color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .command-prompt {
+            color: var(--success-green);
+        }
+
+        .command-text {
+            flex: 1;
+            color: #fff;
+        }
+
+        .copy-button {
+            background: var(--nh-accent-orange);
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .copy-button:hover {
+            background: #e55a00;
+        }
+
+        /* Progress Tracker */
+        .progress-tracker {
+            display: flex;
+            justify-content: space-between;
+            margin: 40px 0;
+            position: relative;
+        }
+
+        .progress-tracker::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--nh-light-gray);
+            z-index: 0;
+        }
+
+        .progress-step {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            flex: 1;
+        }
+
+        .progress-circle {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: 3px solid var(--nh-light-gray);
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.completed .progress-circle {
+            background: var(--success-green);
+            border-color: var(--success-green);
+            color: white;
+        }
+
+        .progress-step.active .progress-circle {
+            background: var(--nh-accent-orange);
+            border-color: var(--nh-accent-orange);
+            color: white;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-tabs {
+                overflow-x: scroll;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .presentation-title {
+                font-size: 1.2rem;
+            }
+            
+            .section-title {
+                font-size: 2em;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .content-section {
+                padding: 20px;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+            }
+            
+            .presentation-container {
+                box-shadow: none;
+                margin: 0;
+            }
+            
+            .nav-tabs, .header {
+                display: none;
+            }
+            
+            .content-section {
+                display: block !important;
+                page-break-before: always;
+            }
+            
+            .content-section:first-child {
+                page-break-before: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="presentation-title">🚀 End User Quick Start Training</div>
+                    <div class="badge">INTERACTIVE</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Navigation -->
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="showSection('welcome')">Welcome</button>
+                <button class="nav-tab" onclick="showSection('getting-started')">Getting Started</button>
+                <button class="nav-tab" onclick="showSection('core-workflow')">Core Workflow</button>
+                <button class="nav-tab" onclick="showSection('claude-code')">Using Claude Code</button>
+                <button class="nav-tab" onclick="showSection('best-practices')">Best Practices</button>
+                <button class="nav-tab" onclick="showSection('compliance')">Compliance & Security</button>
+                <button class="nav-tab" onclick="showSection('common-scenarios')">Common Scenarios</button>
+                <button class="nav-tab" onclick="showSection('resources')">Resources</button>
+            </div>
+
+            <!-- Welcome Section -->
+            <div id="welcome" class="content-section active">
+                <h2 class="section-title">Welcome to the Agentic SDLC Platform! 👋</h2>
+                
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <div class="feature-title">Purpose of This Guide</div>
+                        <p>Get you productive with the Agentic SDLC Platform in under 30 minutes through hands-on examples and practical guidance.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🚀</div>
+                        <div class="feature-title">What You'll Learn</div>
+                        <p>Complete workflow from creating work items to submitting PRs, using AI assistance, and following best practices.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⏱️</div>
+                        <div class="feature-title">Time to Productivity</div>
+                        <p>Follow along with real examples and be ready to start your first task within 30 minutes.</p>
+                    </div>
+                </div>
+
+                <h3 class="subsection-title">What is the Agentic SDLC Platform?</h3>
+                <p style="font-size: 1.1em; line-height: 1.8; margin-bottom: 20px;">
+                    The Agentic SDLC Platform is an AI-powered development platform that revolutionizes how software is built. 
+                    It combines the power of AI agents with enterprise-grade development tools to help you:
+                </p>
+
+                <ul style="font-size: 1.1em; line-height: 1.8; margin-left: 30px;">
+                    <li>✅ Write better code faster with AI assistance</li>
+                    <li>✅ Automate repetitive development tasks</li>
+                    <li>✅ Ensure consistent quality and compliance</li>
+                    <li>✅ Preserve knowledge across sessions and teams</li>
+                    <li>✅ Reduce bugs and technical debt</li>
+                </ul>
+
+                <div class="progress-tracker">
+                    <div class="progress-step active">
+                        <div class="progress-circle">1</div>
+                        <div>Welcome</div>
+                    </div>
+                    <div class="progress-step">
+                        <div class="progress-circle">2</div>
+                        <div>Setup</div>
+                    </div>
+                    <div class="progress-step">
+                        <div class="progress-circle">3</div>
+                        <div>Workflow</div>
+                    </div>
+                    <div class="progress-step">
+                        <div class="progress-circle">4</div>
+                        <div>Practice</div>
+                    </div>
+                    <div class="progress-step">
+                        <div class="progress-circle">5</div>
+                        <div>Master</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Getting Started Section -->
+            <div id="getting-started" class="content-section">
+                <h2 class="section-title">Getting Started 🏁</h2>
+                
+                <h3 class="subsection-title">Prerequisites</h3>
+                <div class="step-guide">
+                    <p>Before you begin, ensure you have:</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>✅ Azure DevOps account with project access</li>
+                        <li>✅ Git installed and configured</li>
+                        <li>✅ Azure CLI installed with DevOps extension</li>
+                        <li>✅ Claude Code CLI installed (optional but recommended)</li>
+                        <li>✅ Your preferred code editor</li>
+                    </ul>
+                </div>
+
+                <h3 class="subsection-title">Step 1: Install Azure CLI and DevOps Extension</h3>
+                <div class="command-palette">
+                    <span class="command-prompt">$</span>
+                    <span class="command-text">brew install azure-cli</span>
+                    <button class="copy-button" onclick="copyCommand(this)">Copy</button>
+                </div>
+                <div class="command-palette">
+                    <span class="command-prompt">$</span>
+                    <span class="command-text">az extension add --name azure-devops</span>
+                    <button class="copy-button" onclick="copyCommand(this)">Copy</button>
+                </div>
+
+                <h3 class="subsection-title">Step 2: Configure Azure DevOps</h3>
+                <div class="command-palette">
+                    <span class="command-prompt">$</span>
+                    <span class="command-text">az login</span>
+                    <button class="copy-button" onclick="copyCommand(this)">Copy</button>
+                </div>
+                <div class="command-palette">
+                    <span class="command-prompt">$</span>
+                    <span class="command-text">az devops configure --defaults organization=https://dev.azure.com/NorthHighland project=agentic-sdlc-platform</span>
+                    <button class="copy-button" onclick="copyCommand(this)">Copy</button>
+                </div>
+
+                <h3 class="subsection-title">Step 3: Clone the Repository</h3>
+                <div class="command-palette">
+                    <span class="command-prompt">$</span>
+                    <span class="command-text">git clone https://dev.azure.com/NorthHighland/agentic-sdlc-platform/_git/agentic-sdlc-platform</span>
+                    <button class="copy-button" onclick="copyCommand(this)">Copy</button>
+                </div>
+                <div class="command-palette">
+                    <span class="command-prompt">$</span>
+                    <span class="command-text">cd agentic-sdlc-platform</span>
+                    <button class="copy-button" onclick="copyCommand(this)">Copy</button>
+                </div>
+
+                <div class="tip-box">
+                    <strong>💡 Pro Tip:</strong> Run <code>cat CLAUDE.md</code> to see the platform's AI instructions and understand how Claude Code works with the codebase.
+                </div>
+
+                <h3 class="subsection-title">Step 4: Install Claude Code (Recommended)</h3>
+                <div class="example-container">
+                    <div class="example-title">🤖 Claude Code Installation</div>
+                    <p>Claude Code is the AI-powered CLI that helps you develop faster:</p>
+                    <div class="command-palette" style="margin-top: 15px;">
+                        <span class="command-prompt">$</span>
+                        <span class="command-text">npm install -g @anthropic/claude-code</span>
+                        <button class="copy-button" onclick="copyCommand(this)">Copy</button>
+                    </div>
+                    <p style="margin-top: 15px;">After installation, configure with your API key:</p>
+                    <div class="command-palette">
+                        <span class="command-prompt">$</span>
+                        <span class="command-text">claude code configure</span>
+                        <button class="copy-button" onclick="copyCommand(this)">Copy</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Core Workflow Section -->
+            <div id="core-workflow" class="content-section">
+                <h2 class="section-title">Core Development Workflow 🔄</h2>
+                
+                <div class="warning-box">
+                    <strong>⚠️ CRITICAL:</strong> Always follow the "Work Item First" policy. Never create code changes without first creating a work item in Azure DevOps.
+                </div>
+
+                <h3 class="subsection-title">The Complete Workflow</h3>
+                
+                <div class="step-guide">
+                    <div style="display: flex; align-items: flex-start; margin-bottom: 20px;">
+                        <span class="step-number">1</span>
+                        <div style="flex: 1;">
+                            <div class="step-title">Create a Work Item</div>
+                            <p>Start by creating a work item in Azure DevOps for your task:</p>
+                            <div class="code-block" style="margin-top: 10px;">
+<code>az boards work-item create \
+  --title "Add user authentication feature" \
+  --type "User Story" \
+  --fields \
+    "System.State=Active" \
+    "System.Description=&lt;strong&gt;User Story:&lt;/strong&gt;&lt;br/&gt;As a user, I want to log in securely...&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Description:&lt;/strong&gt;&lt;br/&gt;Implement JWT-based authentication..." \
+    "Microsoft.VSTS.Common.AcceptanceCriteria=&lt;strong&gt;Acceptance Criteria:&lt;/strong&gt;&lt;br/&gt;✅ User can register&lt;br/&gt;✅ User can log in&lt;br/&gt;✅ JWT tokens are generated&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Definition of Done:&lt;/strong&gt;&lt;br/&gt;✅ Code reviewed&lt;br/&gt;✅ Tests passing&lt;br/&gt;❌ Human approval obtained"</code>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; align-items: flex-start; margin-bottom: 20px;">
+                        <span class="step-number">2</span>
+                        <div style="flex: 1;">
+                            <div class="step-title">Create a Feature Branch</div>
+                            <p>Create a branch using the work item ID:</p>
+                            <div class="code-block" style="margin-top: 10px;">
+<code># Assuming work item #1234 was created
+git checkout -b feature/1234-user-authentication</code>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; align-items: flex-start; margin-bottom: 20px;">
+                        <span class="step-number">3</span>
+                        <div style="flex: 1;">
+                            <div class="step-title">Implement Your Changes</div>
+                            <p>Write your code, following the platform standards. Use Claude Code for assistance:</p>
+                            <div class="code-block" style="margin-top: 10px;">
+<code># Use Claude Code to help implement
+claude code "implement JWT authentication with login and register endpoints"
+
+# Or work directly with your editor
+code src/auth/</code>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; align-items: flex-start; margin-bottom: 20px;">
+                        <span class="step-number">4</span>
+                        <div style="flex: 1;">
+                            <div class="step-title">Commit Your Changes</div>
+                            <p>Stage and commit your changes with a clear message:</p>
+                            <div class="code-block" style="margin-top: 10px;">
+<code>git add .
+git commit -m "feat: implement JWT authentication with login and register endpoints
+
+- Add user registration endpoint with validation
+- Implement secure login with JWT token generation
+- Add authentication middleware for protected routes
+- Include comprehensive test coverage
+
+Resolves: AB#1234"</code>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; align-items: flex-start; margin-bottom: 20px;">
+                        <span class="step-number">5</span>
+                        <div style="flex: 1;">
+                            <div class="step-title">Create a Pull Request</div>
+                            <p>Push your branch and create a PR linked to the work item:</p>
+                            <div class="code-block" style="margin-top: 10px;">
+<code># Push the branch
+git push -u origin feature/1234-user-authentication
+
+# Create PR with proper linking
+az repos pr create \
+  --title "Feature: Add JWT authentication with login and register" \
+  --description "$(cat &lt;&lt;'EOF'
+&lt;strong&gt;🚀 Feature Implementation&lt;/strong&gt;&lt;br/&gt;&lt;br/&gt;
+
+&lt;strong&gt;Changes:&lt;/strong&gt;&lt;br/&gt;
+• Implemented JWT authentication system&lt;br/&gt;
+• Added login and register endpoints&lt;br/&gt;
+• Created authentication middleware&lt;br/&gt;
+• Added comprehensive tests&lt;br/&gt;&lt;br/&gt;
+
+&lt;strong&gt;Testing:&lt;/strong&gt;&lt;br/&gt;
+• ✅ Unit tests passing (100% coverage)&lt;br/&gt;
+• ✅ Integration tests completed&lt;br/&gt;
+• ✅ Manual testing performed&lt;br/&gt;&lt;br/&gt;
+
+&lt;strong&gt;Resolves:&lt;/strong&gt; AB#1234&lt;br/&gt;&lt;br/&gt;
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+EOF
+)"
+
+# Link work item to PR (MANDATORY)
+PR_ID=$(az repos pr list --query "[?sourceRefName=='refs/heads/feature/1234-user-authentication'].pullRequestId | [0]" -o tsv)
+az repos pr work-item add --id $PR_ID --work-items 1234</code>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; align-items: flex-start;">
+                        <span class="step-number">6</span>
+                        <div style="flex: 1;">
+                            <div class="step-title">Wait for Review and Approval</div>
+                            <p><strong>STOP HERE!</strong> Wait for human review and approval before merging. The PR will be reviewed by:</p>
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li>🤖 Automated PR agents for code quality and compliance</li>
+                                <li>👥 Human reviewers for business logic and architecture</li>
+                                <li>✅ Final approval from project maintainers</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="danger-box">
+                    <strong>🛑 NEVER:</strong>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Use auto-merge or auto-complete flags</li>
+                        <li>Merge without human approval</li>
+                        <li>Skip the work item creation step</li>
+                        <li>Mix unrelated changes in one PR</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Using Claude Code Section -->
+            <div id="claude-code" class="content-section">
+                <h2 class="section-title">Using Claude Code 🤖</h2>
+                
+                <p style="font-size: 1.1em; margin-bottom: 30px;">
+                    Claude Code is your AI pair programmer that understands the entire codebase and helps you develop faster while maintaining quality.
+                </p>
+
+                <h3 class="subsection-title">Common Claude Code Commands</h3>
+                
+                <div class="quick-ref-grid">
+                    <div class="quick-ref-card">
+                        <h4 style="color: var(--nh-secondary-blue); margin-bottom: 10px;">💬 General Help</h4>
+                        <div class="command-palette">
+                            <span class="command-text">claude code "explain the authentication system"</span>
+                        </div>
+                    </div>
+                    <div class="quick-ref-card">
+                        <h4 style="color: var(--nh-secondary-blue); margin-bottom: 10px;">🔍 Code Search</h4>
+                        <div class="command-palette">
+                            <span class="command-text">claude code "find all API endpoints"</span>
+                        </div>
+                    </div>
+                    <div class="quick-ref-card">
+                        <h4 style="color: var(--nh-secondary-blue); margin-bottom: 10px;">✨ Code Generation</h4>
+                        <div class="command-palette">
+                            <span class="command-text">claude code "create a new REST endpoint for user profile"</span>
+                        </div>
+                    </div>
+                    <div class="quick-ref-card">
+                        <h4 style="color: var(--nh-secondary-blue); margin-bottom: 10px;">🐛 Bug Fixing</h4>
+                        <div class="command-palette">
+                            <span class="command-text">claude code "fix the null pointer exception in UserService"</span>
+                        </div>
+                    </div>
+                    <div class="quick-ref-card">
+                        <h4 style="color: var(--nh-secondary-blue); margin-bottom: 10px;">✅ Test Writing</h4>
+                        <div class="command-palette">
+                            <span class="command-text">claude code "write tests for the payment module"</span>
+                        </div>
+                    </div>
+                    <div class="quick-ref-card">
+                        <h4 style="color: var(--nh-secondary-blue); margin-bottom: 10px;">📚 Documentation</h4>
+                        <div class="command-palette">
+                            <span class="command-text">claude code "document the API endpoints in auth module"</span>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="subsection-title">Example: Complete Feature Implementation</h3>
+                <div class="example-container">
+                    <div class="example-title">🎯 Real-World Example: Adding Email Notifications</div>
+                    <div class="code-block">
+<code># 1. Start with Claude Code to understand requirements
+claude code "I need to add email notifications when users register. What's the best approach?"
+
+# 2. Create the work item
+claude code "create an ADO work item for adding email notifications to user registration"
+
+# 3. Implement the feature
+claude code "implement email notification service that sends welcome emails after registration"
+
+# 4. Add tests
+claude code "write comprehensive tests for the email notification service"
+
+# 5. Create the PR
+claude code "create a PR for the email notification feature"</code>
+                    </div>
+                </div>
+
+                <div class="tip-box">
+                    <strong>💡 Claude Code Tips:</strong>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>Be specific in your requests for better results</li>
+                        <li>Claude Code understands the entire codebase context</li>
+                        <li>It follows all platform standards automatically</li>
+                        <li>Use it for code review before submitting PRs</li>
+                        <li>Ask it to explain complex code sections</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Best Practices Section -->
+            <div id="best-practices" class="content-section">
+                <h2 class="section-title">Best Practices 🌟</h2>
+                
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">📋</div>
+                        <div class="feature-title">Always Start with a Work Item</div>
+                        <p>Never write code without a work item. This ensures traceability and proper planning.</p>
+                        <div class="tip-box" style="margin-top: 10px;">
+                            <strong>Remember:</strong> Work Item → Branch → Code → PR → Review → Merge
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <div class="feature-title">One PR, One Purpose</div>
+                        <p>Keep PRs focused on a single logical change. Maximum 5 files unless necessary.</p>
+                        <ul style="margin-top: 10px;">
+                            <li>✅ Fix authentication bug</li>
+                            <li>❌ Fix auth bug + update docs + refactor utils</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🔍</div>
+                        <div class="feature-title">Use Semantic Commit Messages</div>
+                        <p>Follow conventional commits for clear history:</p>
+                        <ul style="margin-top: 10px;">
+                            <li><code>feat:</code> New feature</li>
+                            <li><code>fix:</code> Bug fix</li>
+                            <li><code>docs:</code> Documentation</li>
+                            <li><code>refactor:</code> Code refactoring</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">✅</div>
+                        <div class="feature-title">Test Everything</div>
+                        <p>Aim for 100% test coverage on new code. Use Claude Code to help write comprehensive tests.</p>
+                        <div class="command-palette" style="margin-top: 10px;">
+                            <span class="command-text">claude code "write tests for [your-feature]"</span>
+                        </div>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">📚</div>
+                        <div class="feature-title">Document as You Go</div>
+                        <p>Update documentation with your changes. Future you (and your team) will thank you!</p>
+                        <ul style="margin-top: 10px;">
+                            <li>API documentation</li>
+                            <li>Code comments for complex logic</li>
+                            <li>Update README if needed</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🛡️</div>
+                        <div class="feature-title">Security First</div>
+                        <p>Never commit secrets or credentials. Use environment variables and secure storage.</p>
+                        <div class="danger-box" style="margin-top: 10px;">
+                            <strong>Never commit:</strong> API keys, passwords, tokens, connection strings
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="subsection-title">Branch Naming Conventions</h3>
+                <div class="step-guide">
+                    <p><strong>Always include the work item ID in your branch name:</strong></p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>✅ <code>feature/1234-add-user-auth</code></li>
+                        <li>✅ <code>bugfix/5678-fix-login-error</code></li>
+                        <li>✅ <code>hotfix/9012-security-patch</code></li>
+                        <li>❌ <code>feature/add-user-auth</code> (missing work item)</li>
+                        <li>❌ <code>my-feature-branch</code> (no context)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Compliance & Security Section -->
+            <div id="compliance" class="content-section">
+                <h2 class="section-title">Compliance & Security 🛡️</h2>
+                
+                <div class="highlight-box">
+                    <h3 style="color: var(--nh-primary-blue); margin-bottom: 15px;">Compliance Driven Development (CDD)</h3>
+                    <p>The platform includes comprehensive compliance automation that ensures your code meets regulatory requirements throughout the development lifecycle.</p>
+                </div>
+
+                <h3 class="subsection-title">Supported Compliance Frameworks</h3>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🏛️</div>
+                        <div class="feature-title">SOC2 Type II</div>
+                        <p>Automated enforcement of 118 controls across 5 trust service criteria. Real-time validation during development.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🔐</div>
+                        <div class="feature-title">ISO 27001:2022</div>
+                        <p>All 93 Annex A controls implemented with automatic evidence collection and control mapping.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🇪🇺</div>
+                        <div class="feature-title">GDPR</div>
+                        <p>Privacy by Design with data minimization, consent management, and automated data subject rights.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🏥</div>
+                        <div class="feature-title">HIPAA</div>
+                        <p>Healthcare data protection with audit controls, encryption requirements, and access management.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">💳</div>
+                        <div class="feature-title">PCI-DSS</div>
+                        <p>Payment card security standards with automated vulnerability scanning and secure coding practices.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🏛️</div>
+                        <div class="feature-title">Additional Frameworks</div>
+                        <p>NIST, CCPA, SOX, FedRAMP, and custom frameworks supported through flexible configuration.</p>
+                    </div>
+                </div>
+
+                <h3 class="subsection-title">How CDD Works</h3>
+                <div class="step-guide">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <div class="step-title">Automatic Detection</div>
+                            <p>The platform automatically detects when you're working with:</p>
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li>Personal data (triggers GDPR requirements)</li>
+                                <li>Healthcare information (triggers HIPAA controls)</li>
+                                <li>Payment data (triggers PCI-DSS validation)</li>
+                                <li>Security features (triggers SOC2/ISO controls)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <div class="step-title">Real-time Validation</div>
+                            <p>As you code, the platform validates compliance in real-time:</p>
+                            <div class="command-palette" style="margin: 10px 0;">
+                                <span class="command-text">claude code "check compliance for user data handling"</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <div class="step-title">Automated Evidence Collection</div>
+                            <p>Evidence is automatically collected for audits:</p>
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li>Configuration snapshots</li>
+                                <li>Access logs and audit trails</li>
+                                <li>Test results and validations</li>
+                                <li>Security scan reports</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <div class="step-title">Compliance Reporting</div>
+                            <p>Generate compliance reports for auditors:</p>
+                            <div class="command-palette" style="margin: 10px 0;">
+                                <span class="command-text">claude code "generate SOC2 compliance report for Q4"</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="subsection-title">Security Best Practices</h3>
+                <div class="tip-box">
+                    <h4>🔒 Secure Coding Guidelines</h4>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><strong>Never hardcode secrets:</strong> Use environment variables or secure vaults</li>
+                        <li><strong>Encrypt sensitive data:</strong> Platform enforces encryption at rest and in transit</li>
+                        <li><strong>Access control:</strong> Implement least privilege and role-based access</li>
+                        <li><strong>Input validation:</strong> Sanitize all user inputs to prevent injection attacks</li>
+                        <li><strong>Audit logging:</strong> All data access is automatically logged</li>
+                    </ul>
+                </div>
+
+                <h3 class="subsection-title">Privacy Protection</h3>
+                <div class="example-container">
+                    <div class="example-title">🔐 Data Privacy Examples</div>
+                    <div class="code-block">
+<code># Automatic data minimization
+result = await collect_user_data(
+    purpose="registration",
+    required_only=True  # Platform enforces minimal data collection
+)
+
+# Consent management
+if await check_consent(user_id, "marketing"):
+    # Process marketing data
+else:
+    # Skip non-essential processing
+
+# Right to erasure
+await delete_user_data(user_id)  # Automatically removes from all systems</code>
+                    </div>
+                </div>
+
+                <h3 class="subsection-title">Compliance Commands</h3>
+                <div class="command-list">
+                    <div class="command-item">
+                        <code>claude code "check GDPR compliance for user profile feature"</code>
+                        <p>Validates GDPR requirements for a specific feature</p>
+                    </div>
+                    <div class="command-item">
+                        <code>claude code "generate privacy impact assessment"</code>
+                        <p>Creates a PIA for new data processing activities</p>
+                    </div>
+                    <div class="command-item">
+                        <code>claude code "audit trail for user data access"</code>
+                        <p>Reviews all access to user data with compliance checks</p>
+                    </div>
+                    <div class="command-item">
+                        <code>claude code "scan for security vulnerabilities"</code>
+                        <p>Runs comprehensive security analysis with compliance mapping</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Common Scenarios Section -->
+            <div id="common-scenarios" class="content-section">
+                <h2 class="section-title">Common Scenarios 🎭</h2>
+                
+                <h3 class="subsection-title">Scenario 1: Fixing a Bug</h3>
+                <div class="example-container">
+                    <div class="example-title">🐛 Bug Fix Workflow</div>
+                    <ol style="line-height: 1.8;">
+                        <li><strong>Create Bug Work Item:</strong>
+                            <div class="code-block" style="margin: 10px 0;">
+<code>az boards work-item create \
+  --title "Fix: Login fails with special characters in password" \
+  --type "Bug" \
+  --fields \
+    "System.State=Active" \
+    "Microsoft.VSTS.Common.Severity=2 - High"</code>
+                            </div>
+                        </li>
+                        <li><strong>Create branch:</strong> <code>git checkout -b bugfix/2345-login-special-chars</code></li>
+                        <li><strong>Use Claude to investigate:</strong> <code>claude code "find the login validation logic and check special character handling"</code></li>
+                        <li><strong>Fix the issue and test</strong></li>
+                        <li><strong>Create PR with bug fix details</strong></li>
+                    </ol>
+                </div>
+
+                <h3 class="subsection-title">Scenario 2: Adding a New Feature</h3>
+                <div class="example-container">
+                    <div class="example-title">✨ Feature Development</div>
+                    <ol style="line-height: 1.8;">
+                        <li><strong>Discuss requirements with team</strong></li>
+                        <li><strong>Create User Story with detailed acceptance criteria</strong></li>
+                        <li><strong>Use Claude Code for implementation plan:</strong>
+                            <div class="code-block" style="margin: 10px 0;">
+<code>claude code "create an implementation plan for adding real-time notifications using WebSockets"</code>
+                            </div>
+                        </li>
+                        <li><strong>Implement incrementally with tests</strong></li>
+                        <li><strong>Get early feedback through draft PR</strong></li>
+                    </ol>
+                </div>
+
+                <h3 class="subsection-title">Scenario 3: Code Review Feedback</h3>
+                <div class="example-container">
+                    <div class="example-title">📝 Handling Review Comments</div>
+                    <p>When you receive feedback on your PR:</p>
+                    <ol style="line-height: 1.8; margin-top: 15px;">
+                        <li><strong>Address each comment thoughtfully</strong></li>
+                        <li><strong>Use Claude Code for suggestions:</strong>
+                            <div class="code-block" style="margin: 10px 0;">
+<code>claude code "the reviewer suggests using dependency injection here. Show me how to refactor this"</code>
+                            </div>
+                        </li>
+                        <li><strong>Update your code and push changes</strong></li>
+                        <li><strong>Respond to each comment in the PR</strong></li>
+                        <li><strong>Request re-review when ready</strong></li>
+                    </ol>
+                </div>
+
+                <h3 class="subsection-title">Scenario 4: Emergency Hotfix</h3>
+                <div class="warning-box">
+                    <strong>⚠️ For Production Issues:</strong>
+                    <ol style="margin-left: 20px; margin-top: 10px;">
+                        <li>Create high-priority bug work item</li>
+                        <li>Branch from main: <code>hotfix/3456-critical-payment-fix</code></li>
+                        <li>Minimal change to fix the issue</li>
+                        <li>Expedited review process</li>
+                        <li>Deploy immediately after approval</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Resources Section -->
+            <div id="resources" class="content-section">
+                <h2 class="section-title">Resources & Support 📚</h2>
+                
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">📖</div>
+                        <div class="feature-title">Documentation</div>
+                        <ul>
+                            <li><a href="/docs" style="color: var(--nh-secondary-blue);">Platform Documentation</a></li>
+                            <li><a href="/CLAUDE.md" style="color: var(--nh-secondary-blue);">CLAUDE.md - AI Instructions</a></li>
+                            <li><a href="/docs/00-onboarding" style="color: var(--nh-secondary-blue);">Onboarding Guides</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">🛠️</div>
+                        <div class="feature-title">Tools & Scripts</div>
+                        <ul>
+                            <li><code>/scripts/ado/</code> - Azure DevOps helpers</li>
+                            <li><code>/scripts/setup/</code> - Environment setup</li>
+                            <li><code>/scripts/testing/</code> - Test automation</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">💬</div>
+                        <div class="feature-title">Get Help</div>
+                        <ul>
+                            <li>Team Slack: #agentic-sdlc-support</li>
+                            <li>Office Hours: Tuesdays 2-3 PM</li>
+                            <li>Email: platform-support@company.com</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3 class="subsection-title">Quick Command Reference</h3>
+                <div class="quick-ref-grid">
+                    <div class="quick-ref-card">
+                        <h4>Work Items</h4>
+                        <code style="font-size: 0.9em;">az boards work-item create</code><br>
+                        <code style="font-size: 0.9em;">az boards work-item show</code><br>
+                        <code style="font-size: 0.9em;">az boards work-item update</code>
+                    </div>
+                    <div class="quick-ref-card">
+                        <h4>Git</h4>
+                        <code style="font-size: 0.9em;">git checkout -b feature/XXX</code><br>
+                        <code style="font-size: 0.9em;">git add .</code><br>
+                        <code style="font-size: 0.9em;">git commit -m "type: msg"</code>
+                    </div>
+                    <div class="quick-ref-card">
+                        <h4>Pull Requests</h4>
+                        <code style="font-size: 0.9em;">az repos pr create</code><br>
+                        <code style="font-size: 0.9em;">az repos pr work-item add</code><br>
+                        <code style="font-size: 0.9em;">az repos pr show</code>
+                    </div>
+                    <div class="quick-ref-card">
+                        <h4>Claude Code</h4>
+                        <code style="font-size: 0.9em;">claude code "question"</code><br>
+                        <code style="font-size: 0.9em;">claude code configure</code><br>
+                        <code style="font-size: 0.9em;">claude code --help</code>
+                    </div>
+                </div>
+
+                <div class="tip-box" style="margin-top: 40px;">
+                    <h3 style="color: var(--nh-primary-blue); margin-bottom: 15px;">🎉 Congratulations!</h3>
+                    <p style="font-size: 1.1em;">
+                        You now have everything you need to start being productive with the Agentic SDLC Platform. 
+                        Remember:
+                    </p>
+                    <ul style="margin-left: 20px; margin-top: 10px; line-height: 1.8;">
+                        <li>Always start with a work item</li>
+                        <li>Use Claude Code as your AI assistant</li>
+                        <li>Follow the established workflow</li>
+                        <li>Ask for help when needed</li>
+                        <li>Keep learning and improving!</li>
+                    </ul>
+                    <p style="margin-top: 15px; font-weight: 600;">Welcome to the team! 🚀</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab navigation
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => section.classList.remove('active'));
+            
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.nav-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Mark corresponding tab as active
+            const activeTab = Array.from(tabs).find(tab => 
+                tab.textContent.toLowerCase().includes(sectionId.replace('-', ' ').split(' ')[0])
+            );
+            if (activeTab) activeTab.classList.add('active');
+            
+            // Update progress tracker if on welcome page
+            updateProgressTracker(sectionId);
+        }
+
+        // Copy command functionality
+        function copyCommand(button) {
+            const commandText = button.previousElementSibling.textContent;
+            navigator.clipboard.writeText(commandText).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.style.background = 'var(--success-green)';
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = 'var(--nh-accent-orange)';
+                }, 2000);
+            });
+        }
+
+        // Update progress tracker
+        function updateProgressTracker(sectionId) {
+            const progressMap = {
+                'welcome': 1,
+                'getting-started': 2,
+                'core-workflow': 3,
+                'claude-code': 4,
+                'best-practices': 5,
+                'common-scenarios': 5,
+                'resources': 5
+            };
+            
+            const currentStep = progressMap[sectionId] || 1;
+            const steps = document.querySelectorAll('.progress-step');
+            
+            steps.forEach((step, index) => {
+                if (index < currentStep - 1) {
+                    step.classList.add('completed');
+                    step.classList.remove('active');
+                } else if (index === currentStep - 1) {
+                    step.classList.add('active');
+                    step.classList.remove('completed');
+                } else {
+                    step.classList.remove('completed', 'active');
+                }
+            });
+        }
+
+        // Smooth scroll for navigation
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Show welcome section by default
+            showSection('welcome');
+        });
+    </script>
+</body>
+</html>

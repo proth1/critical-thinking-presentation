@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentic PR Review Process | Unified Code Review Intelligence</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;900&display=swap');
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+        }
+
+        .presentation-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            min-height: 100vh;
+        }
+
+        /* Optimized Header */
+        .header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 0.75rem 2rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 2000;
+            overflow: hidden;
+            height: 60px;
+            display: flex;
+            align-items: center;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -50%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+            transform: skewX(-25deg);
+            animation: shimmer 8s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) skewX(-25deg); }
+            100% { transform: translateX(100%) skewX(-25deg); }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .company-branding {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nh-logo {
+            height: 40px;
+            width: auto;
+            flex-shrink: 0;
+            opacity: 1;
+            filter: brightness(1.2);
+        }
+
+        .presentation-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.125rem;
+        }
+
+        .presentation-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #ffffff, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .presentation-subtitle {
+            font-size: 0.875rem;
+            opacity: 0.8;
+            font-weight: 400;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .trust-indicators {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .trust-badge {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 0.375rem 0.875rem;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .trust-badge:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        /* Navigation */
+        .modern-nav {
+            background: #f8fafc;
+            border-bottom: 1px solid #e5e7eb;
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .nav-wrapper {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            padding: 1rem 0;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .nav-links::-webkit-scrollbar {
+            display: none;
+        }
+
+        .nav-link {
+            color: #64748b;
+            text-decoration: none;
+            font-weight: 500;
+            white-space: nowrap;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .nav-link.active {
+            color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1rem;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #3b82f6;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 120px;
+            padding: 2rem;
+        }
+
+        /* Slides */
+        .slide {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .slide-number {
+            display: inline-block;
+            background: #3b82f6;
+            color: white;
+            padding: 0.25rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .slide-title {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #1e293b 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .slide-subtitle {
+            font-size: 1.5rem;
+            color: #64748b;
+            font-weight: 400;
+        }
+
+        /* Content Cards */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .content-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 1rem;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .content-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .content-card:hover {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            transform: translateY(-4px);
+        }
+
+        .content-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #1e293b;
+        }
+
+        .card-description {
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        /* Agent Cards */
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .agent-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+            border: 1px solid #e5e7eb;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .agent-card:hover {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .agent-type {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #6366f1;
+            margin-bottom: 0.5rem;
+        }
+
+        .agent-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #1e293b;
+        }
+
+        .agent-features {
+            list-style: none;
+            padding: 0;
+        }
+
+        .agent-features li {
+            padding: 0.25rem 0;
+            color: #64748b;
+            font-size: 0.875rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .agent-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        /* Architecture Diagram */
+        .architecture-diagram {
+            background: #f8fafc;
+            border-radius: 1rem;
+            padding: 3rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        /* Benefits Section */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .benefit-card {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .benefit-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .benefit-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #1e293b;
+        }
+
+        .benefit-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #3b82f6;
+            margin-bottom: 0.5rem;
+        }
+
+        .benefit-description {
+            color: #64748b;
+        }
+
+        /* Timeline */
+        .timeline {
+            padding: 2rem 0;
+            margin: 3rem 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .timeline-content {
+            flex: 1;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin: 0 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .timeline-marker {
+            width: 3rem;
+            height: 3rem;
+            background: #3b82f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            flex-shrink: 0;
+            margin-right: 1.5rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: #132e53;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .footer-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-logo {
+            height: 40px;
+        }
+
+        .footer-text {
+            border-left: 2px solid rgba(255,255,255,0.3);
+            padding-left: 2rem;
+        }
+
+        .footer-company {
+            font-family: 'Inter', 'Roboto', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .footer-tagline {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Code Blocks */
+        .code-block {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .code-block::before {
+            content: attr(data-language);
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .slide-title {
+                font-size: 2rem;
+            }
+            
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .timeline-item {
+                flex-direction: column;
+            }
+            
+            .timeline-marker {
+                margin: 0 0 1rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="company-branding">
+                    <img src="https://northhighland.com/hubfs/Logos/NHL_Logo_Primary_White.svg"
+                         alt="North Highland"
+                         class="nh-logo">
+                    <div class="presentation-info">
+                        <h1 class="presentation-title">Agentic PR Review Process</h1>
+                        <p class="presentation-subtitle">Unified Code Review Intelligence</p>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="trust-indicators">
+                    <div class="trust-badge">
+                        <span>🛡️ Evidence-Based</span>
+                    </div>
+                    <div class="trust-badge">
+                        <span>📊 Data-Driven</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="modern-nav">
+        <div class="nav-container">
+            <div class="nav-wrapper">
+                <div class="nav-links" id="navLinks">
+                    <a href="#slide-1" class="nav-link active" data-slide="1">
+                        <span>Overview</span>
+                    </a>
+                    <a href="#slide-2" class="nav-link" data-slide="2">
+                        <span>The Challenge</span>
+                    </a>
+                    <a href="#slide-3" class="nav-link" data-slide="3">
+                        <span>Our Solution</span>
+                    </a>
+                    <a href="#slide-4" class="nav-link" data-slide="4">
+                        <span>8 Claude Code Agents</span>
+                    </a>
+                    <a href="#slide-5" class="nav-link" data-slide="5">
+                        <span>Claude Code Architecture</span>
+                    </a>
+                    <a href="#slide-6" class="nav-link" data-slide="6">
+                        <span>Unified Orchestration</span>
+                    </a>
+                    <a href="#slide-7" class="nav-link" data-slide="7">
+                        <span>Benefits & ROI</span>
+                    </a>
+                    <a href="#slide-8" class="nav-link" data-slide="8">
+                        <span>Implementation</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="presentation-container">
+        <div class="main-content">
+            <!-- Slide 1: Overview -->
+            <div id="slide-1" class="slide active">
+                <div class="slide-header">
+                    <span class="slide-number">OVERVIEW</span>
+                    <h1 class="slide-title">Agentic PR Review Process</h1>
+                    <p class="slide-subtitle">Combining AI-Powered Agents for Comprehensive Code Review</p>
+                </div>
+
+                <div class="content-grid">
+                    <div class="content-card">
+                        <div class="card-icon">🤖</div>
+                        <h3 class="card-title">8 Claude Code Agents</h3>
+                        <p class="card-description">
+                            Independent Claude Code agents with specialized expertise, each running as a fully 
+                            autonomous Claude instance for comprehensive code analysis.
+                        </p>
+                    </div>
+                    <div class="content-card">
+                        <div class="card-icon">🔍</div>
+                        <h3 class="card-title">Comprehensive Analysis</h3>
+                        <p class="card-description">
+                            Eight independent Claude Code agents working in parallel to analyze code quality, 
+                            security, performance, business logic, and documentation completeness.
+                        </p>
+                    </div>
+                    <div class="content-card">
+                        <div class="card-icon">🎯</div>
+                        <h3 class="card-title">Claude Code Orchestration</h3>
+                        <p class="card-description">
+                            Intelligent orchestration layer that coordinates all agents, prioritizes findings, 
+                            and generates unified PR comments for seamless developer experience.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="architecture-diagram">
+                    <h3 style="margin-bottom: 2rem;">Unified PR Review Architecture</h3>
+                    <img src="data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgODAwIDQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8IS0tIEJhY2tncm91bmQgLS0+CiAgPHJlY3Qgd2lkdGg9IjgwMCIgaGVpZ2h0PSI0MDAiIGZpbGw9IiNmOGZhZmMiLz4KICAKICA8IS0tIFBSIElucHV0IC0tPgogIDxyZWN0IHg9IjM1MCIgeT0iMjAiIHdpZHRoPSIxMDAiIGhlaWdodD0iNjAiIHJ4PSI4IiBmaWxsPSIjM2I4MmY2IiBzdHJva2U9Im5vbmUiLz4KICA8dGV4dCB4PSI0MDAiIHk9IjU1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1mYW1pbHk9IkludGVyIiBmb250LXNpemU9IjE2IiBmb250LXdlaWdodD0iNjAwIj5QUiBJbnB1dDwvdGV4dD4KICAKICA8IS0tIENsYXVkZSBDb2RlIE9yY2hlc3RyYXRvciAtLT4KICA8cmVjdCB4PSIyNTAiIHk9IjEyMCIgd2lkdGg9IjMwMCIgaGVpZ2h0PSI4MCIgcng9IjgiIGZpbGw9IiM4YjVjZjYiIHN0cm9rZT0ibm9uZSIvPgogIDx0ZXh0IHg9IjQwMCIgeT0iMTU1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1mYW1pbHk9IkludGVyIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iNzAwIj5DbGF1ZGUgQ29kZSBPcmNoZXN0cmF0b3I8L3RleHQ+CiAgPHRleHQgeD0iNDAwIiB5PSIxODAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBmb250LWZhbWlseT0iSW50ZXIiIGZvbnQtc2l6ZT0iMTQiPkFnZW50IENvb3JkaW5hdGlvbiAmIFByaW9yaXRpemF0aW9uPC90ZXh0PgogIAogIDwhLS0gQ29yZSBBZ2VudHMgLS0+CiAgPHJlY3QgeD0iNTAiIHk9IjI0MCIgd2lkdGg9IjIwMCIgaGVpZ2h0PSI2MCIgcng9IjgiIGZpbGw9IiMzYjgyZjYiIHN0cm9rZT0ibm9uZSIvPgogIDx0ZXh0IHg9IjE1MCIgeT0iMjc1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1mYW1pbHk9IkludGVyIiBmb250LXNpemU9IjE2IiBmb250LXdlaWdodD0iNjAwIj7wn5uhIENvcmUgQWdlbnRzICg1MCUpPC90ZXh0PgogIAogIDwhLS0gQW5hbHlzaXMgQWdlbnRzIC0tPgogIDxyZWN0IHg9IjMwMCIgeT0iMjQwIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjYwIiByeD0iOCIgZmlsbD0iIzhiNWNmNiIgc3Ryb2tlPSJub25lIi8+CiAgPHRleHQgeD0iNDAwIiB5PSIyNzUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBmb250LWZhbWlseT0iSW50ZXIiIGZvbnQtc2l6ZT0iMTYiIGZvbnQtd2VpZ2h0PSI2MDAiPvCfk4ogQW5hbHlzaXMgKDMwJSk8L3RleHQ+CiAgCiAgPCEtLSBCdXNpbmVzcyBBZ2VudHMgLS0+CiAgPHJlY3QgeD0iNTUwIiB5PSIyNDAiIHdpZHRoPSIyMDAiIGhlaWdodD0iNjAiIHJ4PSI4IiBmaWxsPSIjZjU5ZTBiIiBzdHJva2U9Im5vbmUiLz4KICA8dGV4dCB4PSI2NTAiIHk9IjI3NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtZmFtaWx5PSJJbnRlciIgZm9udC1zaXplPSIxNiIgZm9udC13ZWlnaHQ9IjYwMCI+8J+SvCBCdXNpbmVzcyAoMjAlKTwvdGV4dD4KICAKICA8IS0tIFVuaWZpZWQgT3V0cHV0IC0tPgogIDxyZWN0IHg9IjI1MCIgeT0iMzIwIiB3aWR0aD0iMzAwIiBoZWlnaHQ9IjYwIiByeD0iOCIgZmlsbD0iIzNiODJmNiIgc3Ryb2tlPSJub25lIi8+CiAgPHRleHQgeD0iNDAwIiB5PSIzNTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBmb250LWZhbWlseT0iSW50ZXIiIGZvbnQtc2l6ZT0iMTYiIGZvbnQtd2VpZ2h0PSI2MDAiPlVuaWZpZWQgUFIgQ29tbWVudDwvdGV4dD4KICAKICA8IS0tIEFycm93cyAtLT4KICA8IS0tIFBSIHRvIE9yY2hlc3RyYXRvciAtLT4KICA8cGF0aCBkPSJNNDAwIDgwIEw0MDAgMTIwIiBzdHJva2U9IiM2NDc0OGIiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIgbWFya2VyLWVuZD0idXJsKCNhcnJvd2hlYWQpIi8+CiAgCiAgPCEtLSBPcmNoZXN0cmF0b3IgdG8gQWdlbnRzIC0tPgogIDxwYXRoIGQ9Ik0zMDAgMjAwIEwxNTAgMjQwIiBzdHJva2U9IiM2NDc0OGIiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIgbWFya2VyLWVuZD0idXJsKCNhcnJvd2hlYWQpIi8+CiAgPHBhdGggZD0iTTQwMCAyMDAgTDQwMCAyNDAiIHN0cm9rZT0iIzY0NzQ4YiIgc3Ryb2tlLXdpZHRoPSIyIiBmaWxsPSJub25lIiBtYXJrZXItZW5kPSJ1cmwoI2Fycm93aGVhZCkiLz4KICA8cGF0aCBkPSJNNTAwIDIwMCBMNjUwIDI0MCIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9Im5vbmUiIG1hcmtlci1lbmQ9InVybCgjYXJyb3doZWFkKSIvPgogIAogIDwhLS0gQWdlbnRzIHRvIFVuaWZpZWQgLS0+CiAgPHBhdGggZD0iTTE1MCAzMDAgTDMwMCAzMjAiIHN0cm9rZT0iIzY0NzQ4YiIgc3Ryb2tlLXdpZHRoPSIyIiBmaWxsPSJub25lIiBtYXJrZXItZW5kPSJ1cmwoI2Fycm93aGVhZCkiLz4KICA8cGF0aCBkPSJNNDAwIDMwMCBMNDAwIDMyMCIgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9Im5vbmUiIG1hcmtlci1lbmQ9InVybCgjYXJyb3doZWFkKSIvPgogIDxwYXRoIGQ9Ik02NTAgMzAwIEw1MDAgMzIwIiBzdHJva2U9IiM2NDc0OGIiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIgbWFya2VyLWVuZD0idXJsKCNhcnJvd2hlYWQpIi8+CiAgCiAgPCEtLSBBcnJvdyBoZWFkIGRlZmluaXRpb24gLS0+CiAgPGRlZnM+CiAgICA8bWFya2VyIGlkPSJhcnJvd2hlYWQiIG1hcmtlcldpZHRoPSIxMCIgbWFya2VySGVpZ2h0PSI3IiByZWZYPSI5IiByZWZZPSIzLjUiIG9yaWVudD0iYXV0byI+CiAgICAgIDxwb2x5Z29uIHBvaW50cz0iMCAwLCAxMCAzLjUsIDAgNyIgZmlsbD0iIzY0NzQ4YiIvPgogICAgPC9tYXJrZXI+CiAgPC9kZWZzPgo8L3N2Zz4=" alt="Unified PR Review Architecture" style="max-width: 100%; height: auto;">
+                </div>
+            </div>
+
+            <!-- Slide 2: The Challenge -->
+            <div id="slide-2" class="slide">
+                <div class="slide-header">
+                    <span class="slide-number">THE CHALLENGE</span>
+                    <h1 class="slide-title">Modern Code Review Challenges</h1>
+                    <p class="slide-subtitle">Why Traditional Reviews Fall Short</p>
+                </div>
+
+                <div class="content-grid">
+                    <div class="content-card">
+                        <div class="card-icon">⏱️</div>
+                        <h3 class="card-title">Time Consuming</h3>
+                        <p class="card-description">
+                            Developers spend 35% of their time on code reviews. Manual reviews miss critical issues 
+                            while focusing on style nitpicks.
+                        </p>
+                    </div>
+                    <div class="content-card">
+                        <div class="card-icon">🔍</div>
+                        <h3 class="card-title">Inconsistent Quality</h3>
+                        <p class="card-description">
+                            Review quality varies by reviewer expertise and availability. Critical security and 
+                            performance issues often go unnoticed.
+                        </p>
+                    </div>
+                    <div class="content-card">
+                        <div class="card-icon">🔄</div>
+                        <h3 class="card-title">Context Switching</h3>
+                        <p class="card-description">
+                            Reviewers lose 23% productivity from context switching. Understanding business logic 
+                            and architectural impact requires deep diving.
+                        </p>
+                    </div>
+                    <div class="content-card">
+                        <div class="card-icon">🏢</div>
+                        <h3 class="card-title">Platform-Specific Needs</h3>
+                        <p class="card-description">
+                            Generic tools miss platform-specific patterns, business rules, and compliance requirements 
+                            unique to your architecture.
+                        </p>
+                    </div>
+                </div>
+
+                <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 2rem; margin: 2rem 0; border-radius: 0.5rem;">
+                    <h3 style="color: #92400e; margin-bottom: 1rem;">The Cost of Poor Reviews</h3>
+                    <ul style="color: #78350f; line-height: 1.8;">
+                        <li>🐛 60% of production bugs traced to inadequate code reviews</li>
+                        <li>💰 Average cost of fixing post-deployment bug: $4,800</li>
+                        <li>⚡ Performance issues caught post-deployment: 10x more expensive</li>
+                        <li>🔒 Security vulnerabilities: Average breach cost $4.45M</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Slide 3: Our Solution -->
+            <div id="slide-3" class="slide">
+                <div class="slide-header">
+                    <span class="slide-number">OUR SOLUTION</span>
+                    <h1 class="slide-title">AI-Powered PR Review System</h1>
+                    <p class="slide-subtitle">Nine Specialized Agents for Comprehensive Code Analysis</p>
+                </div>
+
+                <div style="background: #f0fdf4; border: 2px solid #10b981; padding: 2rem; margin: 2rem 0; border-radius: 1rem;">
+                    <h3 style="color: #064e3b; margin-bottom: 1rem;">Comprehensive Agent-Based Approach</h3>
+                    <p style="color: #065f46; font-size: 1.1rem; line-height: 1.8;">
+                        Our custom 8-agent pipeline provides deep, platform-specific analysis tailored to your codebase. 
+                        This system, orchestrated by Claude Code, delivers comprehensive code review coverage with 
+                        intelligent prioritization and risk-based assessment.
+                    </p>
+                </div>
+
+                <div class="content-grid">
+                    <div class="content-card">
+                        <div class="card-icon">🛡️</div>
+                        <h3 class="card-title">Core Analysis Agents</h3>
+                        <ul style="list-style: none; padding: 0; line-height: 1.8;">
+                            <li>✅ Code Quality & Security Analysis</li>
+                            <li>✅ Test Intelligence & Coverage</li>
+                            <li>✅ Dependency Security Scanning</li>
+                            <li>✅ 50% Weight in Risk Assessment</li>
+                        </ul>
+                    </div>
+                    <div class="content-card">
+                        <div class="card-icon">📊</div>
+                        <h3 class="card-title">Advanced Analysis Agents</h3>
+                        <ul style="list-style: none; padding: 0; line-height: 1.8;">
+                            <li>✅ Human Review Guidance</li>
+                            <li>✅ Performance Impact Analysis</li>
+                            <li>✅ API Contract Validation</li>
+                            <li>✅ 30% Weight in Risk Assessment</li>
+                        </ul>
+                    </div>
+                    <div class="content-card">
+                        <div class="card-icon">💼</div>
+                        <h3 class="card-title">Business Intelligence</h3>
+                        <ul style="list-style: none; padding: 0; line-height: 1.8;">
+                            <li>✅ Business Logic Validation</li>
+                            <li>✅ Documentation Intelligence</li>
+                            <li>✅ Compliance Verification</li>
+                            <li>✅ 20% Weight in Risk Assessment</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="code-block" data-language="python">
+class AgenticPRReviewOrchestrator:
+    """Claude Code orchestrates all PR review agents"""
+    
+    async def orchestrate_review(self, pr_id: str) -> ReviewResult:
+        # Run all 8 agents in parallel
+        agent_tasks = [
+            self.code_quality_agent.analyze(pr_id),
+            self.test_intelligence_agent.analyze(pr_id),
+            self.dependency_security_agent.analyze(pr_id),
+            self.human_review_guidance_agent.analyze(pr_id),
+            self.performance_impact_agent.analyze(pr_id),
+            self.api_contract_validation_agent.analyze(pr_id),
+            self.business_logic_validation_agent.analyze(pr_id),
+            self.documentation_intelligence_agent.analyze(pr_id)
+        ]
+        
+        # Gather and prioritize results
+        results = await asyncio.gather(*agent_tasks)
+        
+        # Apply risk-based weighting and generate unified comment
+        return self.risk_assessor.evaluate_and_merge(results)
+                </div>
+            </div>
+
+            <!-- Slide 4: 8 Claude Code Agent System -->
+            <div id="slide-4" class="slide">
+                <div class="slide-header">
+                    <span class="slide-number">8 CLAUDE CODE AGENTS</span>
+                    <h1 class="slide-title">Independent Claude Code Agent Architecture</h1>
+                    <p class="slide-subtitle">Fully Autonomous AI Agents Powered by Claude</p>
+                </div>
+
+                <h3 style="text-align: center; margin-bottom: 2rem; color: #3b82f6;">Core Analysis Agents (50% Weight)</h3>
+                <div class="agent-grid">
+                    <div class="agent-card">
+                        <div class="agent-type">Core Agent</div>
+                        <h4 class="agent-name">Code Quality Agent</h4>
+                        <ul class="agent-features">
+                            <li>Advanced static analysis</li>
+                            <li>Security pattern detection</li>
+                            <li>Maintainability scoring</li>
+                            <li>Code complexity metrics</li>
+                        </ul>
+                    </div>
+                    <div class="agent-card">
+                        <div class="agent-type">Core Agent</div>
+                        <h4 class="agent-name">Test Intelligence Agent</h4>
+                        <ul class="agent-features">
+                            <li>Smart test selection</li>
+                            <li>Parallel execution optimization</li>
+                            <li>Coverage gap analysis</li>
+                            <li>Test quality assessment</li>
+                        </ul>
+                    </div>
+                    <div class="agent-card">
+                        <div class="agent-type">Core Agent</div>
+                        <h4 class="agent-name">Dependency Security Agent</h4>
+                        <ul class="agent-features">
+                            <li>Vulnerability scanning</li>
+                            <li>License compliance check</li>
+                            <li>Supply chain security</li>
+                            <li>Version compatibility</li>
+                        </ul>
+                    </div>
+                    <div class="agent-card">
+                        <div class="agent-type">Core Agent</div>
+                        <h4 class="agent-name">Acceptance Criteria Agent</h4>
+                        <ul class="agent-features">
+                            <li>Work item criteria extraction</li>
+                            <li>Automated completion tracking</li>
+                            <li>✅/❌ status marking</li>
+                            <li>Progress reporting</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3 style="text-align: center; margin: 2rem 0; color: #8b5cf6;">Advanced Analysis Agents (30% Weight)</h3>
+                <div class="agent-grid">
+                    <div class="agent-card">
+                        <div class="agent-type">Analysis Agent</div>
+                        <h4 class="agent-name">Human Review Guidance</h4>
+                        <ul class="agent-features">
+                            <li>Complexity hotspot detection</li>
+                            <li>Priority area highlighting</li>
+                            <li>Reviewer recommendations</li>
+                            <li>Time estimation</li>
+                        </ul>
+                    </div>
+                    <div class="agent-card">
+                        <div class="agent-type">Analysis Agent</div>
+                        <h4 class="agent-name">Performance Impact Agent</h4>
+                        <ul class="agent-features">
+                            <li>Database query analysis</li>
+                            <li>Algorithm complexity check</li>
+                            <li>Memory usage prediction</li>
+                            <li>Scalability assessment</li>
+                        </ul>
+                    </div>
+                    <div class="agent-card">
+                        <div class="agent-type">Analysis Agent</div>
+                        <h4 class="agent-name">API Contract Validation</h4>
+                        <ul class="agent-features">
+                            <li>Breaking change detection</li>
+                            <li>Schema compatibility</li>
+                            <li>Version validation</li>
+                            <li>Contract compliance</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3 style="text-align: center; margin: 2rem 0; color: #f59e0b;">Business Intelligence Agents (20% Weight)</h3>
+                <div class="agent-grid" style="max-width: 600px; margin: 0 auto;">
+                    <div class="agent-card">
+                        <div class="agent-type">Business Agent</div>
+                        <h4 class="agent-name">Business Logic Validation</h4>
+                        <ul class="agent-features">
+                            <li>Business rule compliance</li>
+                            <li>Workflow integrity check</li>
+                            <li>Regulatory compliance</li>
+                            <li>Domain logic verification</li>
+                        </ul>
+                    </div>
+                    <div class="agent-card">
+                        <div class="agent-type">Business Agent</div>
+                        <h4 class="agent-name">Documentation Intelligence</h4>
+                        <ul class="agent-features">
+                            <li>API documentation check</li>
+                            <li>Code comment quality</li>
+                            <li>Architecture doc updates</li>
+                            <li>README completeness</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 5: Claude Code Agent Architecture -->
+            <div id="slide-5" class="slide">
+                <div class="slide-header">
+                    <span class="slide-number">CLAUDE CODE ORCHESTRATION</span>
+                    <h1 class="slide-title">Claude Code Orchestrator Design</h1>
+                    <p class="slide-subtitle">Independent Claude Code Agents with Master Orchestrator</p>
+                </div>
+
+                <div class="content-grid">
+                    <div class="content-card">
+                        <div class="card-icon">🎯</div>
+                        <h3 class="card-title">Parallel Execution</h3>
+                        <p class="card-description">
+                            All 8 Claude Code agents execute simultaneously as independent processes. Each agent 
+                            is a fully autonomous Claude instance with specialized expertise, coordinated by the 
+                            Claude Code Orchestrator for maximum efficiency.
+                        </p>
+                    </div>
+                    <div class="content-card">
+                        <div class="card-icon">⚡</div>
+                        <h3 class="card-title">Risk-Based Weighting</h3>
+                        <ul style="list-style: none; padding: 0; line-height: 1.8;">
+                            <li>🛡️ Core Agents: 50% weight</li>
+                            <li>📊 Analysis Agents: 30% weight</li>
+                            <li>💼 Business Agents: 20% weight</li>
+                            <li>🎯 Dynamic adjustment based on context</li>
+                            <li>📈 Learning from historical decisions</li>
+                        </ul>
+                    </div>
+                    <div class="content-card">
+                        <div class="card-icon">🔧</div>
+                        <h3 class="card-title">Continuous Learning</h3>
+                        <ul style="list-style: none; padding: 0; line-height: 1.8;">
+                            <li>✅ Pattern recognition improvement</li>
+                            <li>✅ False positive reduction</li>
+                            <li>✅ Context-aware analysis</li>
+                            <li>✅ Team preference adaptation</li>
+                            <li>✅ Performance optimization</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="background: #f8fafc; border-radius: 1rem; padding: 2rem; margin: 2rem 0;">
+                    <h3 style="margin-bottom: 1.5rem;">Agent Communication Protocol</h3>
+                    <div class="code-block" data-language="python">
+# Agent communication through shared context
+class AgentContext:
+    def __init__(self):
+        self.shared_findings = {}
+        self.code_analysis = {}
+        self.risk_factors = []
+        
+    async def share_finding(self, agent_id: str, finding: Finding):
+        """Agents share critical findings in real-time"""
+        self.shared_findings[agent_id] = finding
+        await self.notify_relevant_agents(finding)
+        
+    async def get_related_context(self, file_path: str) -> Dict:
+        """Agents access shared analysis context"""
+        return {
+            'security_issues': self.filter_by_type('security'),
+            'performance_concerns': self.filter_by_type('performance'),
+            'business_rules': self.filter_by_type('business')
+        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 6: Unified Orchestration -->
+            <div id="slide-6" class="slide">
+                <div class="slide-header">
+                    <span class="slide-number">UNIFIED ORCHESTRATION</span>
+                    <h1 class="slide-title">Claude Code Intelligence</h1>
+                    <p class="slide-subtitle">Seamless Integration & Intelligent Coordination</p>
+                </div>
+
+                <div class="architecture-diagram">
+                    <h3 style="margin-bottom: 2rem;">Orchestration Flow</h3>
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-marker">1</div>
+                            <div class="timeline-content">
+                                <h4>PR Trigger</h4>
+                                <p>New PR or update triggers unified review system</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker">2</div>
+                            <div class="timeline-content">
+                                <h4>Parallel Execution</h4>
+                                <p>All 8 agents analyze code simultaneously</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker">3</div>
+                            <div class="timeline-content">
+                                <h4>Result Collection</h4>
+                                <p>Gather findings from all systems</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker">4</div>
+                            <div class="timeline-content">
+                                <h4>Intelligent Deduplication</h4>
+                                <p>Merge similar findings, preserve unique insights</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-marker">5</div>
+                            <div class="timeline-content">
+                                <h4>Unified Comment</h4>
+                                <p>Generate comprehensive PR comment</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-grid">
+                    <div class="content-card">
+                        <div class="card-icon">🧠</div>
+                        <h3 class="card-title">Deduplication Logic</h3>
+                        <ul style="list-style: none; padding: 0; line-height: 1.8;">
+                            <li>• Prioritize more specific findings</li>
+                            <li>• Combine similar issues</li>
+                            <li>• Preserve source attribution</li>
+                            <li>• Maintain finding context</li>
+                        </ul>
+                    </div>
+                    <div class="content-card">
+                        <div class="card-icon">📊</div>
+                        <h3 class="card-title">Risk Prioritization</h3>
+                        <ul style="list-style: none; padding: 0; line-height: 1.8;">
+                            <li>• Security: 40% weight</li>
+                            <li>• Business Logic: 30% weight</li>
+                            <li>• Performance: 20% weight</li>
+                            <li>• Style: 10% weight</li>
+                        </ul>
+                    </div>
+                    <div class="content-card">
+                        <div class="card-icon">💬</div>
+                        <h3 class="card-title">Unified Output</h3>
+                        <ul style="list-style: none; padding: 0; line-height: 1.8;">
+                            <li>• Executive summary</li>
+                            <li>• Categorized findings</li>
+                            <li>• Auto-fix suggestions</li>
+                            <li>• Action recommendations</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="code-block" data-language="markdown">
+## 🤖 Claude Code Agent-Powered PR Review System
+
+### 📋 Executive Summary
+**Decision:** APPROVE_WITH_CONDITIONS
+**Overall Risk:** MEDIUM
+**Findings:** 12 total (0 critical, 3 high priority)
+
+### 🤖 Claude Code Orchestrator Results
+- ✅ Code Quality: All patterns analyzed
+- ⚠️ Security: 2 medium vulnerabilities found
+- 🔧 Test Coverage: 85% with gaps identified
+
+### 🏗️ Business & Technical Analysis
+- ✅ Business rules validated
+- ✅ API contracts maintained
+- ⚠️ Performance: Database query optimization needed
+
+### 💡 Recommendations
+1. Apply auto-fixes for style issues
+2. Review security vulnerabilities
+3. Optimize identified database queries
+                </div>
+            </div>
+
+            <!-- Slide 7: Benefits & ROI -->
+            <div id="slide-7" class="slide">
+                <div class="slide-header">
+                    <span class="slide-number">BENEFITS & ROI</span>
+                    <h1 class="slide-title">Measurable Business Impact</h1>
+                    <p class="slide-subtitle">Transform Your Development Efficiency</p>
+                </div>
+
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <div class="benefit-icon">⏱️</div>
+                        <h3 class="benefit-title">Review Time</h3>
+                        <div class="benefit-value">50%</div>
+                        <p class="benefit-description">Reduction in review cycle time</p>
+                    </div>
+                    <div class="benefit-card">
+                        <div class="benefit-icon">🐛</div>
+                        <h3 class="benefit-title">Bug Detection</h3>
+                        <div class="benefit-value">90%</div>
+                        <p class="benefit-description">Issues caught before production</p>
+                    </div>
+                    <div class="benefit-card">
+                        <div class="benefit-icon">💰</div>
+                        <h3 class="benefit-title">Cost Savings</h3>
+                        <div class="benefit-value">$2.1M</div>
+                        <p class="benefit-description">Annual savings for 50 developers</p>
+                    </div>
+                </div>
+
+                <div style="background: #f0fdf4; border-radius: 1rem; padding: 2rem; margin: 2rem 0;">
+                    <h3 style="color: #064e3b; margin-bottom: 1rem;">Expected Outcomes</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                        <div>
+                            <h4 style="color: #065f46;">Immediate Benefits</h4>
+                            <ul style="color: #047857; line-height: 1.8;">
+                                <li>✅ 100% PR coverage</li>
+                                <li>✅ Consistent review quality</li>
+                                <li>✅ Faster feedback loops</li>
+                                <li>✅ Reduced context switching</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 style="color: #065f46;">Long-term Impact</h4>
+                            <ul style="color: #047857; line-height: 1.8;">
+                                <li>✅ Improved code quality</li>
+                                <li>✅ Knowledge transfer</li>
+                                <li>✅ Reduced technical debt</li>
+                                <li>✅ Higher team velocity</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-grid" style="margin-top: 3rem;">
+                    <div class="content-card">
+                        <h3 class="card-title">Developer Experience</h3>
+                        <ul style="list-style: none; padding: 0; line-height: 1.8;">
+                            <li>😊 Less time on mundane reviews</li>
+                            <li>🎯 Focus on complex problems</li>
+                            <li>📚 Learn from AI suggestions</li>
+                            <li>🚀 Ship code faster</li>
+                        </ul>
+                    </div>
+                    <div class="content-card">
+                        <h3 class="card-title">Business Value</h3>
+                        <ul style="list-style: none; padding: 0; line-height: 1.8;">
+                            <li>💎 Higher code quality</li>
+                            <li>🛡️ Reduced security risks</li>
+                            <li>⚡ Faster time to market</li>
+                            <li>💰 Lower maintenance costs</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 8: Implementation -->
+            <div id="slide-8" class="slide">
+                <div class="slide-header">
+                    <span class="slide-number">IMPLEMENTATION</span>
+                    <h1 class="slide-title">Getting Started</h1>
+                    <p class="slide-subtitle">Your Path to Unified Code Review</p>
+                </div>
+
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-marker">W1</div>
+                        <div class="timeline-content">
+                            <h4>Week 1: Claude Code Agent Setup</h4>
+                            <ul style="list-style: none; padding: 0;">
+                                <li>✓ Deploy Claude Code Orchestrator</li>
+                                <li>✓ Configure 8 specialized agents</li>
+                                <li>✓ Set up Docker Compose environment</li>
+                                <li>✓ Test agent communication</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker">W2</div>
+                        <div class="timeline-content">
+                            <h4>Week 2: Agent Integration</h4>
+                            <ul style="list-style: none; padding: 0;">
+                                <li>✓ Configure inter-agent protocol</li>
+                                <li>✓ Implement parallel execution</li>
+                                <li>✓ Set up risk-based weighting</li>
+                                <li>✓ Test all agent endpoints</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker">W3</div>
+                        <div class="timeline-content">
+                            <h4>Week 3: PR Integration</h4>
+                            <ul style="list-style: none; padding: 0;">
+                                <li>✓ Create comment generator</li>
+                                <li>✓ Design templates</li>
+                                <li>✓ Handle edge cases</li>
+                                <li>✓ Scenario testing</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker">W4</div>
+                        <div class="timeline-content">
+                            <h4>Week 4: Deployment</h4>
+                            <ul style="list-style: none; padding: 0;">
+                                <li>✓ Deploy to test</li>
+                                <li>✓ Monitor performance</li>
+                                <li>✓ Gather feedback</li>
+                                <li>✓ Fine-tune config</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #dbeafe; border-radius: 1rem; padding: 2rem; margin: 2rem 0; text-align: center;">
+                    <h3 style="color: #1e3a8a; margin-bottom: 1rem;">Success Criteria</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 2rem;">
+                        <div style="background: white; padding: 1.5rem; border-radius: 0.5rem;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #3b82f6;">80%</div>
+                            <div style="color: #64748b;">Adoption Rate</div>
+                        </div>
+                        <div style="background: white; padding: 1.5rem; border-radius: 0.5rem;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #3b82f6;">70%</div>
+                            <div style="color: #64748b;">Auto-fix Acceptance</div>
+                        </div>
+                        <div style="background: white; padding: 1.5rem; border-radius: 0.5rem;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #3b82f6;">50%</div>
+                            <div style="color: #64748b;">Time Reduction</div>
+                        </div>
+                        <div style="background: white; padding: 1.5rem; border-radius: 0.5rem;">
+                            <div style="font-size: 2rem; font-weight: bold; color: #3b82f6;">8/10</div>
+                            <div style="color: #64748b;">User Satisfaction</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #f0f9ff; border: 2px solid #3b82f6; padding: 2rem; margin: 2rem 0; border-radius: 1rem;">
+                    <h3 style="color: #1e40af; margin-bottom: 1rem; text-align: center;">🚀 How to Run PR Agents</h3>
+                    <p style="color: #1e3a8a; font-size: 1.1rem; text-align: center; margin-bottom: 1.5rem;">
+                        After creating your PR, run the comprehensive agent analysis:
+                    </p>
+                    <div style="background: #1e293b; color: #e2e8f0; padding: 1.5rem; border-radius: 0.5rem; font-family: 'JetBrains Mono', monospace; margin: 1rem auto; max-width: 600px;">
+                        <div style="color: #94a3b8; margin-bottom: 0.5rem;"># Run all 8 Claude Code review agents</div>
+                        <div style="color: #60a5fa;">./scripts/ado/run-pr-agents.sh &lt;PR_ID&gt;</div>
+                        <div style="margin-top: 1rem; color: #94a3b8;"># Example:</div>
+                        <div style="color: #34d399;">./scripts/ado/run-pr-agents.sh 1234</div>
+                    </div>
+                    <div style="margin-top: 1.5rem; text-align: center;">
+                        <p style="color: #64748b; font-size: 0.95rem;">
+                            ✅ Runs acceptance criteria verification<br>
+                            ✅ Updates work items with completion status<br>
+                            ✅ Posts detailed findings as PR comments<br>
+                            ✅ Provides risk assessment and recommendations
+                        </p>
+                    </div>
+                </div>
+
+                <div class="content-card" style="max-width: 800px; margin: 2rem auto; text-align: center;">
+                    <h3 class="card-title">Ready to Transform Your Code Reviews?</h3>
+                    <p class="card-description" style="font-size: 1.1rem; margin: 1rem 0;">
+                        The unified PR review system combines the best of industry-standard tools with your 
+                        platform-specific needs. Start your journey to faster, more reliable code reviews today.
+                    </p>
+                    <div style="margin-top: 2rem;">
+                        <button style="background: #3b82f6; color: white; padding: 1rem 2rem; border: none; border-radius: 0.5rem; font-size: 1.1rem; font-weight: 600; cursor: pointer; margin: 0.5rem;">
+                            Get Started
+                        </button>
+                        <button style="background: white; color: #3b82f6; padding: 1rem 2rem; border: 2px solid #3b82f6; border-radius: 0.5rem; font-size: 1.1rem; font-weight: 600; cursor: pointer; margin: 0.5rem;">
+                            Learn More
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Script -->
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 8;
+
+        function showSlide(slideNumber) {
+            // Hide all slides
+            document.querySelectorAll('.slide').forEach(slide => {
+                slide.classList.remove('active');
+            });
+            
+            // Show selected slide
+            document.getElementById(`slide-${slideNumber}`).classList.add('active');
+            
+            // Update navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            document.querySelector(`[data-slide="${slideNumber}"]`).classList.add('active');
+            
+            currentSlide = slideNumber;
+        }
+
+        // Navigation click handlers
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const slideNumber = parseInt(link.getAttribute('data-slide'));
+                showSlide(slideNumber);
+            });
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' && currentSlide < totalSlides) {
+                showSlide(currentSlide + 1);
+            } else if (e.key === 'ArrowLeft' && currentSlide > 1) {
+                showSlide(currentSlide - 1);
+            }
+        });
+
+        // Touch support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50 && currentSlide < totalSlides) {
+                showSlide(currentSlide + 1);
+            }
+            if (touchEndX > touchStartX + 50 && currentSlide > 1) {
+                showSlide(currentSlide - 1);
+            }
+        }
+    </script>
+
+    <!-- North Highland Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <img src="https://northhighland.com/hubfs/Logos/NHL_Logo_Primary_White.svg" alt="North Highland" class="footer-logo">
+            <div class="footer-text">
+                <div class="footer-company">NORTH HIGHLAND</div>
+                <div class="footer-tagline">The World's Leading Change & Transformation Consultancy</div>
+            </div>
+        </div>
+        <div style="font-size: 0.85rem; opacity: 0.7; margin-bottom: 0.5rem;">
+            © 2025 North Highland. All rights reserved. | northhighland.com
+        </div>
+        <div style="font-size: 0.8rem; opacity: 0.6;">
+            This document contains confidential and proprietary information.
+        </div>
+    </footer>
+</body>
+</html>

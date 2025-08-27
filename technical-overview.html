@@ -1,0 +1,2787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentic SDLC Platform - Technical Overview - North Highland</title>
+    <style>
+        /* North Highland Brand Colors and Styling */
+        :root {
+            --nh-primary-blue: #003366;
+            --nh-secondary-blue: #0066CC;
+            --nh-accent-orange: #FF6600;
+            --nh-light-gray: #F5F5F5;
+            --nh-dark-gray: #333333;
+            --nh-text-color: #2C2C2C;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;900&display=swap');
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #1a1a1a;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .presentation-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            min-height: 100vh;
+        }
+
+        /* Optimized Header */
+        .header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 0.75rem 2rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 2000;
+            overflow: hidden;
+            height: 60px;
+            display: flex;
+            align-items: center;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -50%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+            transform: skewX(-25deg);
+            animation: shimmer 8s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) skewX(-25deg); }
+            100% { transform: translateX(100%) skewX(-25deg); }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .company-branding {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nh-logo {
+            height: 40px;
+            width: auto;
+            flex-shrink: 0;
+            opacity: 1;
+            filter: brightness(1.2);
+        }
+
+        .presentation-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.125rem;
+        }
+
+        .presentation-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #ffffff, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .presentation-subtitle {
+            font-size: 0.875rem;
+            opacity: 0.8;
+            font-weight: 400;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .trust-indicators {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .trust-badge {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 0.375rem 0.875rem;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .trust-badge:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+
+        /* Navigation */
+        .nav-tabs {
+            background: var(--nh-light-gray);
+            display: flex;
+            border-bottom: 3px solid var(--nh-accent-orange);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-top: 60px;
+            position: sticky;
+            top: 60px;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--nh-dark-gray);
+            transition: all 0.3s ease;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .nav-tab:hover {
+            background: var(--nh-secondary-blue);
+            color: white;
+        }
+
+        .nav-tab.active {
+            background: var(--nh-accent-orange);
+            color: white;
+        }
+
+        .nav-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--nh-primary-blue);
+        }
+
+        /* Content Sections - Fixed for white space */
+        .content-section {
+            display: none;
+            padding: 40px;
+            animation: fadeIn 0.5s ease-in;
+            min-height: calc(100vh - 180px);
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Typography */
+        .section-title {
+            color: var(--nh-primary-blue);
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            border-bottom: 3px solid var(--nh-accent-orange);
+            padding-bottom: 15px;
+        }
+
+        .subsection-title {
+            color: var(--nh-secondary-blue);
+            font-size: 1.8em;
+            margin: 30px 0 20px 0;
+            font-weight: 600;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, var(--nh-light-gray) 0%, #E8F4FD 100%);
+            border-left: 5px solid var(--nh-accent-orange);
+            padding: 25px;
+            margin: 25px 0;
+            border-radius: 5px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Feature Grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .feature-card {
+            background: white;
+            border: 2px solid var(--nh-light-gray);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        .feature-card:hover {
+            border-color: var(--nh-accent-orange);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Critical Thinking content cards */
+        .content-card:hover {
+            border-color: var(--nh-accent-orange) !important;
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .content-card .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .feature-icon {
+            font-size: 3em;
+            color: var(--nh-secondary-blue);
+            margin-bottom: 20px;
+        }
+
+        .feature-title {
+            color: var(--nh-primary-blue);
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        /* Architecture Diagram Container */
+        .architecture-container {
+            background: var(--nh-light-gray);
+            border-radius: 10px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        #architecture-diagram {
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Benefits List */
+        .benefits-list {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .benefits-list li {
+            padding: 15px 0;
+            border-bottom: 1px solid #E0E0E0;
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .benefits-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            top: 15px;
+            color: var(--nh-accent-orange);
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .benefits-list li:last-child {
+            border-bottom: none;
+        }
+
+        /* Metrics Dashboard */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .metric-card {
+            background: white;
+            border-left: 5px solid var(--nh-secondary-blue);
+            padding: 25px;
+            border-radius: 5px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: var(--nh-primary-blue);
+            margin-bottom: 10px;
+        }
+
+        .metric-label {
+            color: var(--nh-dark-gray);
+            font-size: 1.1em;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            margin: 40px 0;
+            padding-left: 40px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--nh-accent-orange);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -35px;
+            top: 30px;
+            width: 15px;
+            height: 15px;
+            background: var(--nh-secondary-blue);
+            border: 3px solid white;
+            border-radius: 50%;
+            box-shadow: 0 0 0 3px var(--nh-accent-orange);
+        }
+
+        .timeline-title {
+            color: var(--nh-primary-blue);
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        /* Enhanced Code Presentation */
+        .code-showcase {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .code-showcase::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .code-showcase-header {
+            position: absolute;
+            top: 12px;
+            left: 20px;
+            display: flex;
+            gap: 8px;
+            z-index: 1;
+        }
+
+        .code-window-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff5f57;
+        }
+
+        .code-window-dot:nth-child(2) {
+            background: #ffbd2e;
+        }
+
+        .code-window-dot:nth-child(3) {
+            background: #28ca42;
+        }
+
+        .code-showcase-content {
+            margin-top: 20px;
+            font-family: 'JetBrains Mono', 'Monaco', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: #e2e8f0;
+        }
+
+        .code-line {
+            display: block;
+            padding: 2px 0;
+        }
+
+        .code-comment {
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .code-keyword {
+            color: #c084fc;
+        }
+
+        .code-string {
+            color: #a5f3fc;
+        }
+
+        .code-function {
+            color: #fbbf24;
+        }
+
+        .code-number {
+            color: #f87171;
+        }
+
+        /* Service Cards */
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .service-card {
+            background: white;
+            border: 2px solid var(--nh-light-gray);
+            border-radius: 10px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .service-card:hover {
+            border-color: var(--nh-accent-orange);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .service-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .service-icon {
+            font-size: 2em;
+            color: var(--nh-secondary-blue);
+            margin-right: 15px;
+        }
+
+        .service-name {
+            color: var(--nh-primary-blue);
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        .service-swagger-link {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--nh-secondary-blue);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .service-swagger-link:hover {
+            background: var(--nh-primary-blue);
+            transform: translateY(-2px);
+        }
+
+        /* Integration Cards */
+        .integration-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .integration-card {
+            background: white;
+            border: 2px solid var(--nh-light-gray);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .integration-card:hover {
+            border-color: var(--nh-accent-orange);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .integration-logo {
+            font-size: 2.5em;
+            color: var(--nh-secondary-blue);
+            margin-bottom: 10px;
+        }
+
+        .integration-name {
+            color: var(--nh-primary-blue);
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 3000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--nh-primary-blue) 0%, var(--nh-secondary-blue) 100%);
+            color: white;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            right: 2rem;
+            top: 2rem;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .close:hover {
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 2rem;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        /* Call to Action */
+        .cta-section {
+            background: linear-gradient(135deg, var(--nh-primary-blue) 0%, var(--nh-secondary-blue) 100%);
+            color: white;
+            padding: 50px;
+            text-align: center;
+            margin: 40px 0;
+            border-radius: 10px;
+        }
+
+        .cta-title {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .cta-button {
+            background: var(--nh-accent-orange);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+        }
+
+        .cta-button:hover {
+            background: #E55A00;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--nh-dark-gray);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Status indicators */
+        .status-green { color: #28a745; font-weight: bold; }
+        .status-yellow { color: #ffc107; font-weight: bold; }
+        .status-red { color: #dc3545; font-weight: bold; }
+        .status-blue { color: var(--nh-secondary-blue); font-weight: bold; }
+
+        /* Info Boxes */
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid var(--nh-secondary-blue);
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .success-box {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+        }
+
+        .warning-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+        }
+
+        .info-box-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--nh-primary-blue);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .nav-tab {
+                border-bottom: 1px solid #DDD;
+            }
+            
+            .presentation-title {
+                font-size: 2em;
+            }
+            
+            .feature-grid, .service-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .timeline {
+                padding-left: 20px;
+            }
+            
+            .timeline::before {
+                left: 10px;
+            }
+            
+            .timeline-item::before {
+                left: -25px;
+            }
+        }
+
+        /* Custom Architecture Diagram Styles */
+        .custom-architecture-diagram {
+            padding: 2rem;
+            background: linear-gradient(to bottom, #f8f9fa, #ffffff);
+            border-radius: 12px;
+            min-height: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .arch-layer {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 1.5rem;
+            width: 100%;
+            max-width: 900px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .arch-layer:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .layer-title {
+            color: var(--nh-primary-blue);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0 0 1rem 0;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .layer-content {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .arch-component {
+            background: #f5f7fa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            min-width: 140px;
+            transition: all 0.2s ease;
+        }
+
+        .arch-component:hover {
+            background: #e8f0fe;
+            border-color: var(--nh-secondary-blue);
+            transform: scale(1.05);
+        }
+
+        .arch-component.primary {
+            background: #e8f0fe;
+            border-color: var(--nh-secondary-blue);
+        }
+
+        .arch-component.security {
+            background: #fff3e0;
+            border-color: var(--nh-accent-orange);
+        }
+
+        .arch-component.database {
+            background: #e8f5e9;
+            border-color: #4caf50;
+        }
+
+        .arch-component.cache {
+            background: #fff3e0;
+            border-color: #ff9800;
+        }
+
+        .component-icon, .service-icon, .agent-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .component-name, .service-name, .agent-name {
+            font-weight: 600;
+            color: var(--nh-dark-gray);
+            margin-bottom: 0.25rem;
+        }
+
+        .component-tech, .service-port {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        /* Services Grid */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            width: 100%;
+        }
+
+        .arch-service {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .arch-service:hover {
+            background: #e3f2fd;
+            border-color: var(--nh-secondary-blue);
+            transform: scale(1.05);
+            cursor: pointer;
+        }
+
+        .arch-service.highlight {
+            background: #e8f0fe;
+            border-color: var(--nh-secondary-blue);
+            border-width: 2px;
+        }
+
+        /* Agents Grid */
+        .agents-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+            width: 100%;
+        }
+
+        .arch-agent {
+            background: #fff8e1;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 0.75rem;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .arch-agent:hover {
+            background: #fff3e0;
+            border-color: var(--nh-accent-orange);
+            transform: scale(1.05);
+        }
+
+        /* Flow Arrows */
+        .arch-flow-down, .arch-flow-split {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0.5rem 0;
+        }
+
+        .arch-flow-split {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        /* Dual Layer Container */
+        .arch-dual-layer {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .client-layer {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-color: var(--nh-secondary-blue);
+        }
+
+        .gateway-layer {
+            background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
+            border-color: #9c27b0;
+        }
+
+        .services-layer {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-color: #4caf50;
+        }
+
+        .data-layer {
+            background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+            border-color: #ffc107;
+        }
+
+        .ai-layer {
+            background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%);
+            border-color: #e91e63;
+        }
+
+        /* Responsive Architecture Diagram */
+        @media (max-width: 768px) {
+            .arch-dual-layer {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .services-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .agents-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+            }
+            
+            .presentation-container {
+                box-shadow: none;
+                margin: 0;
+            }
+            
+            .nav-tabs, .header, .floating-nav {
+                display: none;
+            }
+            
+            .content-section {
+                display: block !important;
+                page-break-inside: avoid;
+                page-break-after: auto;
+                margin-bottom: 2rem;
+            }
+            
+            /* Force page break only before major sections */
+            #services, #capabilities, #deployment, #integration, #critical-thinking, #roi {
+                page-break-before: always;
+            }
+            
+            /* Ensure content doesn't create blank pages */
+            .content-section:last-child {
+                page-break-after: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="company-branding">
+                        <img src="https://northhighland.com/hubfs/Logos/NHL_Logo_Primary_White.svg"
+                             alt="North Highland"
+                             class="nh-logo">
+                        <div class="presentation-info">
+                            <h1 class="presentation-title">Agentic SDLC Platform</h1>
+                            <p class="presentation-subtitle">Technical Deep Dive</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="trust-indicators">
+                        <div class="trust-badge">
+                            <span>🛡️ Evidence-Based</span>
+                        </div>
+                        <div class="trust-badge">
+                            <span>📊 Data-Driven</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+            <button class="nav-tab active" onclick="showSection('overview')">Overview</button>
+            <button class="nav-tab" onclick="showSection('architecture')">Architecture</button>
+            <button class="nav-tab" onclick="showSection('services')">Services</button>
+            <button class="nav-tab" onclick="showSection('capabilities')">Capabilities</button>
+            <button class="nav-tab" onclick="showSection('deployment')">Deployment</button>
+            <button class="nav-tab" onclick="showSection('integration')">Integration</button>
+            <button class="nav-tab" onclick="showSection('critical-thinking')">Critical Thinking</button>
+            <button class="nav-tab" onclick="showSection('roi')">Business Value</button>
+        </nav>
+
+        <!-- Content Sections -->
+        
+        <!-- Overview Section -->
+        <div id="overview" class="content-section active">
+            <h2 class="section-title">Platform Overview</h2>
+            
+            <div class="highlight-box">
+                <p style="font-size: 1.2em; font-weight: 600; color: var(--nh-primary-blue);">
+                    Enterprise-grade AI platform that revolutionizes software development through intelligent automation, context preservation, and continuous learning.
+                </p>
+            </div>
+
+            <h3 class="subsection-title">Core Platform Features</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <div class="feature-title">Claude Code Agent Architecture</div>
+                    <p>8 specialized Claude Code agents working in parallel for comprehensive code analysis, validation, and review automation.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🧠</div>
+                    <div class="feature-title">Context Intelligence</div>
+                    <p>Revolutionary memory system preserves knowledge across sessions, teams, and projects with 80-90% efficiency.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <div class="feature-title">Continuous Learning</div>
+                    <p>Pattern recognition and adaptive learning improve platform performance over time through continuous feedback.</p>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Technical Specifications</h3>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value">< 50ms</div>
+                    <div class="metric-label">API Response Time</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">8 Agents</div>
+                    <div class="metric-label">Claude Code Agents</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">Parallel</div>
+                    <div class="metric-label">Agent Execution</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">Multi-Tenant</div>
+                    <div class="metric-label">Tenant Isolation</div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Technology Stack</h3>
+            <div class="info-box">
+                <div class="info-box-title">Frontend Technologies</div>
+                <p>React 18, TypeScript, Material-UI, Redux Toolkit, WebSocket for real-time updates, Mermaid.js for visualizations</p>
+            </div>
+            <div class="info-box">
+                <div class="info-box-title">Backend Technologies</div>
+                <p>Python 3.11+, FastAPI, PostgreSQL 15+, Redis 7+, Docker/Kubernetes, SQLAlchemy, Pydantic</p>
+            </div>
+            <div class="info-box">
+                <div class="info-box-title">AI/ML Stack</div>
+                <p>Custom Claude Code Agents (8 specialized agents), Critical Thinking Framework, Pattern Learning System, Context Intelligence Engine</p>
+            </div>
+            <div class="info-box">
+                <div class="info-box-title">Infrastructure & DevOps</div>
+                <p>Docker Compose (local deployment), Kubernetes-ready manifests, Prometheus + Grafana monitoring, Azure DevOps integration</p>
+            </div>
+        </div>
+
+        <!-- Architecture Section -->
+        <div id="architecture" class="content-section">
+            <h2 class="section-title">System Architecture</h2>
+            
+            <div class="highlight-box">
+                <p style="font-size: 1.2em; font-weight: 600; color: var(--nh-primary-blue);">
+                    Microservices architecture with AI-first design, built for scale, resilience, and extensibility.
+                </p>
+            </div>
+
+            <h3 class="subsection-title">Architecture Overview</h3>
+            <div class="architecture-container">
+                <p>Multi-tier microservices architecture with intelligent orchestration:</p>
+                <div id="architecture-diagram" class="custom-architecture-diagram">
+                    <!-- Client Layer -->
+                    <div class="arch-layer client-layer">
+                        <h4 class="layer-title">Client Layer</h4>
+                        <div class="layer-content">
+                            <div class="arch-component">
+                                <div class="component-icon">🌐</div>
+                                <div class="component-name">React 18 UI</div>
+                                <div class="component-tech">TypeScript</div>
+                            </div>
+                            <div class="arch-component">
+                                <div class="component-icon">💻</div>
+                                <div class="component-name">Claude Code CLI</div>
+                                <div class="component-tech">Command Line</div>
+                            </div>
+                            <div class="arch-component">
+                                <div class="component-icon">🔌</div>
+                                <div class="component-name">API SDK</div>
+                                <div class="component-tech">Client Libraries</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Flow Arrow -->
+                    <div class="arch-flow-down">
+                        <svg width="40" height="40" viewBox="0 0 40 40">
+                            <path d="M20 5 L20 30 M12 22 L20 30 L28 22" stroke="#0066CC" stroke-width="2" fill="none"/>
+                        </svg>
+                    </div>
+                    
+                    <!-- Gateway Layer -->
+                    <div class="arch-layer gateway-layer">
+                        <h4 class="layer-title">API Gateway Layer</h4>
+                        <div class="layer-content">
+                            <div class="arch-component primary">
+                                <div class="component-icon">🚪</div>
+                                <div class="component-name">Platform Gateway</div>
+                                <div class="component-tech">Port 8080</div>
+                            </div>
+                            <div class="arch-component security">
+                                <div class="component-icon">🔐</div>
+                                <div class="component-name">Enterprise Auth</div>
+                                <div class="component-tech">OAuth/SAML/FIDO2</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Flow Arrow -->
+                    <div class="arch-flow-down">
+                        <svg width="40" height="40" viewBox="0 0 40 40">
+                            <path d="M20 5 L20 30 M12 22 L20 30 L28 22" stroke="#0066CC" stroke-width="2" fill="none"/>
+                        </svg>
+                    </div>
+                    
+                    <!-- Microservices Layer -->
+                    <div class="arch-layer services-layer">
+                        <h4 class="layer-title">Microservices Layer</h4>
+                        <div class="layer-content services-grid">
+                            <div class="arch-service">
+                                <div class="service-icon">👑</div>
+                                <div class="service-name">Admin Dashboard</div>
+                                <div class="service-port">:18012</div>
+                            </div>
+                            <div class="arch-service">
+                                <div class="service-icon">⚙️</div>
+                                <div class="service-name">Tenant Config</div>
+                                <div class="service-port">:18011</div>
+                            </div>
+                            <div class="arch-service">
+                                <div class="service-icon">🤝</div>
+                                <div class="service-name">Session Handoff</div>
+                                <div class="service-port">:18006</div>
+                            </div>
+                            <div class="arch-service">
+                                <div class="service-icon">🛡️</div>
+                                <div class="service-name">Trust Verification</div>
+                                <div class="service-port">:18007</div>
+                            </div>
+                            <div class="arch-service highlight">
+                                <div class="service-icon">🧠</div>
+                                <div class="service-name">Context Intelligence</div>
+                                <div class="service-port">:18008</div>
+                            </div>
+                            <div class="arch-service highlight">
+                                <div class="service-icon">📊</div>
+                                <div class="service-name">Pattern Learning</div>
+                                <div class="service-port">:18009</div>
+                            </div>
+                            <div class="arch-service">
+                                <div class="service-icon">🔄</div>
+                                <div class="service-name">State Sync</div>
+                                <div class="service-port">:18010</div>
+                            </div>
+                            <div class="arch-service highlight">
+                                <div class="service-icon">🔍</div>
+                                <div class="service-name">Critical Thinking</div>
+                                <div class="service-port">:18011</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Flow Arrows -->
+                    <div class="arch-flow-split">
+                        <svg width="100%" height="40" viewBox="0 0 400 40">
+                            <path d="M200 5 L200 20 M100 20 L300 20 M100 20 L100 35 L105 30 M300 20 L300 35 L295 30" stroke="#0066CC" stroke-width="2" fill="none"/>
+                        </svg>
+                    </div>
+                    
+                    <!-- Data and AI Layers -->
+                    <div class="arch-dual-layer">
+                        <!-- Data Layer -->
+                        <div class="arch-layer data-layer">
+                            <h4 class="layer-title">Data Layer</h4>
+                            <div class="layer-content">
+                                <div class="arch-component database">
+                                    <div class="component-icon">🗄️</div>
+                                    <div class="component-name">PostgreSQL 15+</div>
+                                    <div class="component-tech">Primary Store</div>
+                                </div>
+                                <div class="arch-component cache">
+                                    <div class="component-icon">⚡</div>
+                                    <div class="component-name">Redis 7+</div>
+                                    <div class="component-tech">Cache & Session</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- AI Agents Layer -->
+                        <div class="arch-layer ai-layer">
+                            <h4 class="layer-title">Claude Code Agent Layer</h4>
+                            <div class="layer-content agents-grid">
+                                <div class="arch-agent">
+                                    <div class="agent-icon">✨</div>
+                                    <div class="agent-name">Code Quality</div>
+                                </div>
+                                <div class="arch-agent">
+                                    <div class="agent-icon">🧪</div>
+                                    <div class="agent-name">Test Intelligence</div>
+                                </div>
+                                <div class="arch-agent">
+                                    <div class="agent-icon">🔐</div>
+                                    <div class="agent-name">Security Agent</div>
+                                </div>
+                                <div class="arch-agent">
+                                    <div class="agent-icon">👤</div>
+                                    <div class="agent-name">Human Review</div>
+                                </div>
+                                <div class="arch-agent">
+                                    <div class="agent-icon">⚡</div>
+                                    <div class="agent-name">Performance</div>
+                                </div>
+                                <div class="arch-agent">
+                                    <div class="agent-icon">🔗</div>
+                                    <div class="agent-name">API Validation</div>
+                                </div>
+                                <div class="arch-agent">
+                                    <div class="agent-icon">💼</div>
+                                    <div class="agent-name">Business Logic</div>
+                                </div>
+                                <div class="arch-agent">
+                                    <div class="agent-icon">📚</div>
+                                    <div class="agent-name">Documentation</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Key Architectural Patterns</h3>
+            <div class="feature-grid">
+                <div class="feature-card" onclick="showPatternDetail('event-driven')">
+                    <div class="feature-icon">🔧</div>
+                    <div class="feature-title">Event-Driven Architecture</div>
+                    <p>Asynchronous processing with event sourcing for scalability and audit trails.</p>
+                </div>
+                <div class="feature-card" onclick="showPatternDetail('zero-trust')">
+                    <div class="feature-icon">🔒</div>
+                    <div class="feature-title">Zero-Trust Security</div>
+                    <p>End-to-end encryption, mTLS between services, and comprehensive RBAC.</p>
+                </div>
+                <div class="feature-card" onclick="showPatternDetail('cqrs')">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-title">CQRS Pattern</div>
+                    <p>Separate read/write models for optimal performance and scalability.</p>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Infrastructure Components</h3>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-title">Service Access</div>
+                    <p>Direct port-based access for each service with health check endpoints.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-title">Container Orchestration</div>
+                    <p>Docker Compose for local deployment with Kubernetes manifests ready for cloud deployment.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-title">Service Communication</div>
+                    <p>RESTful APIs with JWT authentication and tenant isolation.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-title">Data Storage</div>
+                    <p>PostgreSQL for persistent data and Redis for caching and session management.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-title">Configuration Management</div>
+                    <p>Centralized tenant configuration with AES-256-GCM encryption and 80-90% context efficiency.</p>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">High Availability Design</h3>
+            <div class="info-box success-box">
+                <div class="info-box-title">Multi-Region Deployment</div>
+                <p>Active-active configuration across 3+ regions with <10ms data replication.</p>
+            </div>
+            <div class="info-box success-box">
+                <div class="info-box-title">Disaster Recovery</div>
+                <p>RPO < 1 minute, RTO < 5 minutes with automated failover and backups.</p>
+            </div>
+        </div>
+
+        <!-- Services Section -->
+        <div id="services" class="content-section">
+            <h2 class="section-title">Platform Services</h2>
+            
+            <div class="highlight-box">
+                <p style="font-size: 1.2em; font-weight: 600; color: var(--nh-primary-blue);">
+                    AI-powered microservices working in harmony to deliver intelligent software development capabilities.
+                </p>
+            </div>
+
+            <h3 class="subsection-title">Core Services</h3>
+            <div class="service-grid">
+                <div class="service-card" onclick="showServiceDetail('context')">
+                    <a href="http://localhost:18008/docs" class="service-swagger-link" onclick="event.stopPropagation();">API Docs</a>
+                    <div class="service-header">
+                        <div class="service-icon">🧠</div>
+                        <div class="service-name">Context Intelligence Service</div>
+                    </div>
+                    <p>Preserves and manages context across sessions with advanced memory algorithms.</p>
+                    <div class="info-box" style="margin-top: 15px;">
+                        <strong>Port:</strong> 18008<br>
+                        <strong>Health:</strong> /health/live<br>
+                        <strong>Swagger:</strong> /docs
+                    </div>
+                </div>
+                <div class="service-card" onclick="showServiceDetail('critical')">
+                    <a href="http://localhost:18011/docs" class="service-swagger-link" onclick="event.stopPropagation();">API Docs</a>
+                    <div class="service-header">
+                        <div class="service-icon">🔍</div>
+                        <div class="service-name">Critical Thinking Service</div>
+                    </div>
+                    <p>Multi-agent validation system ensuring code quality and compliance.</p>
+                    <div class="info-box" style="margin-top: 15px;">
+                        <strong>Port:</strong> 18011<br>
+                        <strong>Health:</strong> /health/live<br>
+                        <strong>Swagger:</strong> /docs
+                    </div>
+                </div>
+                <div class="service-card" onclick="showServiceDetail('pattern')">
+                    <a href="http://localhost:18009/docs" class="service-swagger-link" onclick="event.stopPropagation();">API Docs</a>
+                    <div class="service-header">
+                        <div class="service-icon">📊</div>
+                        <div class="service-name">Pattern Learning Service</div>
+                    </div>
+                    <p>Identifies and learns from development patterns to improve efficiency.</p>
+                    <div class="info-box" style="margin-top: 15px;">
+                        <strong>Port:</strong> 18009<br>
+                        <strong>Health:</strong> /health/live<br>
+                        <strong>Swagger:</strong> /docs
+                    </div>
+                </div>
+                <div class="service-card" onclick="showServiceDetail('state')">
+                    <a href="http://localhost:18010/docs" class="service-swagger-link" onclick="event.stopPropagation();">API Docs</a>
+                    <div class="service-header">
+                        <div class="service-icon">🔄</div>
+                        <div class="service-name">State Synchronization</div>
+                    </div>
+                    <p>Ensures consistent state across distributed services and sessions.</p>
+                    <div class="info-box" style="margin-top: 15px;">
+                        <strong>Port:</strong> 18010<br>
+                        <strong>Health:</strong> /health/live<br>
+                        <strong>Swagger:</strong> /docs
+                    </div>
+                </div>
+                <div class="service-card" onclick="showServiceDetail('session')">
+                    <a href="http://localhost:18006/docs" class="service-swagger-link" onclick="event.stopPropagation();">API Docs</a>
+                    <div class="service-header">
+                        <div class="service-icon">🤝</div>
+                        <div class="service-name">Session Handoff Service</div>
+                    </div>
+                    <p>Seamless context transfer between AI agents and human developers.</p>
+                    <div class="info-box" style="margin-top: 15px;">
+                        <strong>Port:</strong> 18006<br>
+                        <strong>Health:</strong> /health/live<br>
+                        <strong>Swagger:</strong> /docs
+                    </div>
+                </div>
+                <div class="service-card" onclick="showServiceDetail('trust')">
+                    <a href="http://localhost:18007/docs" class="service-swagger-link" onclick="event.stopPropagation();">API Docs</a>
+                    <div class="service-header">
+                        <div class="service-icon">🛡️</div>
+                        <div class="service-name">Trust Verification</div>
+                    </div>
+                    <p>Validates AI outputs and ensures accuracy before deployment.</p>
+                    <div class="info-box" style="margin-top: 15px;">
+                        <strong>Port:</strong> 18007<br>
+                        <strong>Health:</strong> /health/live<br>
+                        <strong>Swagger:</strong> /docs
+                    </div>
+                </div>
+                <div class="service-card" onclick="showServiceDetail('tenant')">
+                    <a href="http://localhost:18011/docs" class="service-swagger-link" onclick="event.stopPropagation();">API Docs</a>
+                    <div class="service-header">
+                        <div class="service-icon">⚙️</div>
+                        <div class="service-name">Tenant Configuration Service</div>
+                    </div>
+                    <p>Centralized configuration management with encryption and audit logging.</p>
+                    <div class="info-box" style="margin-top: 15px;">
+                        <strong>Port:</strong> 18011<br>
+                        <strong>Health:</strong> /health/live<br>
+                        <strong>Swagger:</strong> /docs
+                    </div>
+                </div>
+                <div class="service-card" onclick="showServiceDetail('admin')">
+                    <a href="http://localhost:18012/docs" class="service-swagger-link" onclick="event.stopPropagation();">API Docs</a>
+                    <div class="service-header">
+                        <div class="service-icon">👑</div>
+                        <div class="service-name">Admin Dashboard</div>
+                    </div>
+                    <p>Unified management interface for platform administration and monitoring.</p>
+                    <div class="info-box" style="margin-top: 15px;">
+                        <strong>Port:</strong> 18012<br>
+                        <strong>Health:</strong> /health/live<br>
+                        <strong>Swagger:</strong> /docs
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Service Communication Patterns</h3>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-title">Synchronous REST APIs</div>
+                    <p>All services expose RESTful APIs with consistent patterns:</p>
+                    <div class="code-showcase">
+                        <div class="code-showcase-header">
+                            <div class="code-window-dot"></div>
+                            <div class="code-window-dot"></div>
+                            <div class="code-window-dot"></div>
+                        </div>
+                        <div class="code-showcase-content">
+                            <span class="code-line"><span class="code-comment">// Standard API request pattern</span></span>
+                            <span class="code-line"><span class="code-keyword">const</span> <span class="code-function">response</span> = <span class="code-keyword">await</span> <span class="code-function">fetch</span>(<span class="code-string">'http://localhost:8001/api/v1/context/capture'</span>, {</span>
+                            <span class="code-line">    <span class="code-keyword">method</span>: <span class="code-string">'POST'</span>,</span>
+                            <span class="code-line">    <span class="code-keyword">headers</span>: {</span>
+                            <span class="code-line">        <span class="code-string">'Authorization'</span>: <span class="code-string">`Bearer ${token}`</span>,</span>
+                            <span class="code-line">        <span class="code-string">'X-Tenant-ID'</span>: tenantId,</span>
+                            <span class="code-line">        <span class="code-string">'Content-Type'</span>: <span class="code-string">'application/json'</span></span>
+                            <span class="code-line">    },</span>
+                            <span class="code-line">    <span class="code-keyword">body</span>: JSON.<span class="code-function">stringify</span>({ sessionId, workItemId, context })</span>
+                            <span class="code-line">});</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-title">WebSocket Real-Time Events</div>
+                    <p>Real-time bidirectional communication for live updates:</p>
+                    <div class="code-showcase">
+                        <div class="code-showcase-header">
+                            <div class="code-window-dot"></div>
+                            <div class="code-window-dot"></div>
+                            <div class="code-window-dot"></div>
+                        </div>
+                        <div class="code-showcase-content">
+                            <span class="code-line"><span class="code-comment">// WebSocket connection for real-time updates</span></span>
+                            <span class="code-line"><span class="code-keyword">const</span> <span class="code-function">ws</span> = <span class="code-keyword">new</span> <span class="code-function">WebSocket</span>(<span class="code-string">'wss://api.agentic-platform.dev/v1/events'</span>);</span>
+                            <span class="code-line"></span>
+                            <span class="code-line">ws.<span class="code-function">on</span>(<span class="code-string">'message'</span>, (<span class="code-keyword">event</span>) => {</span>
+                            <span class="code-line">    <span class="code-keyword">const</span> data = JSON.<span class="code-function">parse</span>(event.data);</span>
+                            <span class="code-line">    <span class="code-comment">// Handle real-time updates</span></span>
+                            <span class="code-line">    <span class="code-function">updateUI</span>(data);</span>
+                            <span class="code-line">});</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-title">Asynchronous Processing</div>
+                    <p>Long-running operations with webhook callbacks:</p>
+                    <div class="code-showcase">
+                        <div class="code-showcase-header">
+                            <div class="code-window-dot"></div>
+                            <div class="code-window-dot"></div>
+                            <div class="code-window-dot"></div>
+                        </div>
+                        <div class="code-showcase-content">
+                            <span class="code-line"><span class="code-comment">// Initiate async operation</span></span>
+                            <span class="code-line"><span class="code-keyword">const</span> { jobId } = <span class="code-keyword">await</span> <span class="code-function">fetch</span>(<span class="code-string">'/api/critical-thinking/analyze'</span>, {</span>
+                            <span class="code-line">    <span class="code-keyword">method</span>: <span class="code-string">'POST'</span>,</span>
+                            <span class="code-line">    <span class="code-keyword">body</span>: JSON.<span class="code-function">stringify</span>({</span>
+                            <span class="code-line">        pullRequestId: <span class="code-string">'PR#1234'</span>,</span>
+                            <span class="code-line">        agents: [<span class="code-string">'all'</span>], <span class="code-comment">// Run all 8 agents</span></span>
+                            <span class="code-line">        webhook: { url: <span class="code-string">'https://your-system.com/webhook'</span> }</span>
+                            <span class="code-line">    })</span>
+                            <span class="code-line">}).<span class="code-function">then</span>(r => r.<span class="code-function">json</span>());</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Capabilities Section -->
+        <div id="capabilities" class="content-section">
+            <h2 class="section-title">Platform Capabilities</h2>
+            
+            <div class="highlight-box">
+                <p style="font-size: 1.2em; font-weight: 600; color: var(--nh-primary-blue);">
+                    AI-powered capabilities that transform how software is built, tested, and maintained.
+                </p>
+            </div>
+
+            <h3 class="subsection-title">Claude Code Agent Capabilities</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <div class="feature-title">Code Quality Analysis</div>
+                    <p>Real-time code quality metrics, security vulnerability detection, and automated refactoring suggestions.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🧪</div>
+                    <div class="feature-title">Intelligent Testing</div>
+                    <p>Automated test generation, coverage optimization, and intelligent test prioritization based on code changes.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔐</div>
+                    <div class="feature-title">Security Validation</div>
+                    <p>Dependency vulnerability scanning, license compliance checking, and supply chain security analysis.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <div class="feature-title">Performance Analysis</div>
+                    <p>Database query optimization, algorithm complexity analysis, and memory usage profiling.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <div class="feature-title">API Contract Validation</div>
+                    <p>Breaking change detection, schema compatibility validation, and version management.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📋</div>
+                    <div class="feature-title">Documentation Intelligence</div>
+                    <p>Automated documentation generation, completeness checking, and consistency validation.</p>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Context Preservation Features</h3>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-title">Cross-Session Memory</div>
+                    <p>Preserves context and knowledge across multiple development sessions with 80-90% efficiency.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-title">Team Knowledge Sharing</div>
+                    <p>Shares patterns and best practices across team members automatically.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-title">Project Context</div>
+                    <p>Maintains project-specific context including architecture decisions and coding standards.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-title">Pattern Recognition</div>
+                    <p>Identifies and suggests optimal patterns based on historical development data.</p>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Enterprise Features</h3>
+            <div class="info-box">
+                <div class="info-box-title">Multi-Tenant Architecture</div>
+                <p>Complete tenant isolation with separate databases, encryption keys, and resource quotas.</p>
+            </div>
+            <div class="info-box">
+                <div class="info-box-title">Enterprise Authentication</div>
+                <p>Support for OAuth 2.0, SAML 2.0, FIDO2, and custom enterprise SSO providers.</p>
+            </div>
+            <div class="info-box">
+                <div class="info-box-title">Compliance & Audit</div>
+                <p>SOC2, ISO 27001, GDPR compliant with comprehensive audit logging and data retention policies.</p>
+            </div>
+        </div>
+
+        <!-- Deployment Section -->
+        <div id="deployment" class="content-section">
+            <h2 class="section-title">Deployment & Infrastructure</h2>
+            
+            <div class="highlight-box">
+                <p style="font-size: 1.2em; font-weight: 600; color: var(--nh-primary-blue);">
+                    Flexible deployment options from local development to enterprise-scale cloud infrastructure.
+                </p>
+            </div>
+
+            <h3 class="subsection-title">Deployment Options</h3>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🐳</div>
+                    <div class="feature-title">Docker Compose</div>
+                    <p>Single-command local deployment for development and testing environments.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">☸️</div>
+                    <div class="feature-title">Kubernetes</div>
+                    <p>Production-ready Helm charts for deployment to any Kubernetes cluster.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">☁️</div>
+                    <div class="feature-title">Cloud Native</div>
+                    <p>Optimized for AWS EKS, Azure AKS, and Google GKE with auto-scaling.</p>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Infrastructure Requirements</h3>
+            <div class="code-showcase">
+                <div class="code-showcase-header">
+                    <div class="code-window-dot"></div>
+                    <div class="code-window-dot"></div>
+                    <div class="code-window-dot"></div>
+                </div>
+                <div class="code-showcase-content">
+                    <span class="code-line"><span class="code-comment"># Minimum Requirements (50 developers)</span></span>
+                    <span class="code-line">- Kubernetes <span class="code-number">1.25+</span></span>
+                    <span class="code-line">- <span class="code-number">8</span> nodes × <span class="code-number">16</span> vCPU, <span class="code-number">64GB</span> RAM</span>
+                    <span class="code-line">- <span class="code-number">2TB</span> SSD storage (<span class="code-number">10K</span> IOPS)</span>
+                    <span class="code-line">- PostgreSQL <span class="code-number">14+</span></span>
+                    <span class="code-line">- Redis <span class="code-number">6+</span></span>
+                    <span class="code-line"></span>
+                    <span class="code-line"><span class="code-comment"># Recommended Production Setup</span></span>
+                    <span class="code-line">- Kubernetes <span class="code-number">1.27+</span></span>
+                    <span class="code-line">- <span class="code-number">12</span> nodes × <span class="code-number">32</span> vCPU, <span class="code-number">128GB</span> RAM</span>
+                    <span class="code-line">- <span class="code-number">5TB</span> NVMe storage (<span class="code-number">50K</span> IOPS)</span>
+                    <span class="code-line">- PostgreSQL <span class="code-number">15+</span> with streaming replication</span>
+                    <span class="code-line">- Redis Cluster <span class="code-number">7+</span></span>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Quick Start Guide</h3>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-title">1. Clone Repository</div>
+                    <div class="code-showcase">
+                        <div class="code-showcase-header">
+                            <div class="code-window-dot"></div>
+                            <div class="code-window-dot"></div>
+                            <div class="code-window-dot"></div>
+                        </div>
+                        <div class="code-showcase-content">
+                            <span class="code-line">git clone https://github.com/agentic-sdlc/platform.git</span>
+                            <span class="code-line">cd platform</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-title">2. Start Services</div>
+                    <div class="code-showcase">
+                        <div class="code-showcase-header">
+                            <div class="code-window-dot"></div>
+                            <div class="code-window-dot"></div>
+                            <div class="code-window-dot"></div>
+                        </div>
+                        <div class="code-showcase-content">
+                            <span class="code-line">docker-compose up -d</span>
+                            <span class="code-line">docker ps  <span class="code-comment"># Verify all services are running</span></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-title">3. Verify Installation</div>
+                    <div class="code-showcase">
+                        <div class="code-showcase-header">
+                            <div class="code-window-dot"></div>
+                            <div class="code-window-dot"></div>
+                            <div class="code-window-dot"></div>
+                        </div>
+                        <div class="code-showcase-content">
+                            <span class="code-line"><span class="code-comment"># Check service health</span></span>
+                            <span class="code-line">curl http://localhost:8001/health</span>
+                            <span class="code-line">curl http://localhost:18112  <span class="code-comment"># Admin Dashboard</span></span>
+                            <span class="code-line">curl http://localhost:7860  <span class="code-comment"># RiskRegIQ Demo</span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Integration Section -->
+        <div id="integration" class="content-section">
+            <h2 class="section-title">Enterprise Integrations</h2>
+            
+            <div class="highlight-box">
+                <p style="font-size: 1.2em; font-weight: 600; color: var(--nh-primary-blue);">
+                    Seamless integration with your existing development ecosystem and enterprise tools.
+                </p>
+            </div>
+
+            <h3 class="subsection-title">Development Tool Integrations</h3>
+            <div class="integration-grid">
+                <div class="integration-card">
+                    <div class="integration-logo">🔷</div>
+                    <div class="integration-name">Azure DevOps</div>
+                    <p>Work items, pipelines, repos</p>
+                </div>
+                <div class="integration-card">
+                    <div class="integration-logo">🐙</div>
+                    <div class="integration-name">GitHub Enterprise</div>
+                    <p>Actions, issues, PRs</p>
+                </div>
+                <div class="integration-card">
+                    <div class="integration-logo">🦊</div>
+                    <div class="integration-name">GitLab</div>
+                    <p>CI/CD, merge requests</p>
+                </div>
+                <div class="integration-card">
+                    <div class="integration-logo">🔵</div>
+                    <div class="integration-name">Jira</div>
+                    <p>Stories, sprints, epics</p>
+                </div>
+                <div class="integration-card">
+                    <div class="integration-logo">🟠</div>
+                    <div class="integration-name">Bitbucket</div>
+                    <p>Repos, pipelines</p>
+                </div>
+                <div class="integration-card">
+                    <div class="integration-logo">🟣</div>
+                    <div class="integration-name">Slack</div>
+                    <p>Notifications, alerts</p>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">API Integration Examples</h3>
+            <div class="code-showcase">
+                <div class="code-showcase-header">
+                    <div class="code-window-dot"></div>
+                    <div class="code-window-dot"></div>
+                    <div class="code-window-dot"></div>
+                </div>
+                <div class="code-showcase-content">
+                    <span class="code-line"><span class="code-comment">// Example: Using the platform's REST API for context capture</span></span>
+                    <span class="code-line"><span class="code-keyword">const</span> <span class="code-function">response</span> = <span class="code-keyword">await</span> <span class="code-function">fetch</span>(<span class="code-string">'http://localhost:8001/api/context/capture'</span>, {</span>
+                    <span class="code-line">  <span class="code-keyword">method</span>: <span class="code-string">'POST'</span>,</span>
+                    <span class="code-line">  <span class="code-keyword">headers</span>: {</span>
+                    <span class="code-line">    <span class="code-string">'Authorization'</span>: <span class="code-string">'Bearer '</span> + apiToken,</span>
+                    <span class="code-line">    <span class="code-string">'X-Tenant-ID'</span>: <span class="code-string">'your-tenant-id'</span>,</span>
+                    <span class="code-line">    <span class="code-string">'Content-Type'</span>: <span class="code-string">'application/json'</span></span>
+                    <span class="code-line">  },</span>
+                    <span class="code-line">  <span class="code-keyword">body</span>: JSON.<span class="code-function">stringify</span>({</span>
+                    <span class="code-line">    sessionId: currentSession,</span>
+                    <span class="code-line">    workItemId: <span class="code-string">'AB#4827'</span>,</span>
+                    <span class="code-line">    context: { code: currentCode, requirements: workItemRequirements }</span>
+                    <span class="code-line">  })</span>
+                    <span class="code-line">});</span>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Webhook Integration</h3>
+            <div class="code-showcase">
+                <div class="code-showcase-header">
+                    <div class="code-window-dot"></div>
+                    <div class="code-window-dot"></div>
+                    <div class="code-window-dot"></div>
+                </div>
+                <div class="code-showcase-content">
+                    <span class="code-line"><span class="code-comment"># Webhook-based integration for CI/CD pipeline</span></span>
+                    <span class="code-line">POST http://localhost:8001/v1/webhooks/configure</span>
+                    <span class="code-line">Authorization: Bearer ${API_TOKEN}</span>
+                    <span class="code-line">Content-Type: application/json</span>
+                    <span class="code-line"></span>
+                    <span class="code-line">{</span>
+                    <span class="code-line">  <span class="code-string">"tenant"</span>: <span class="code-string">"policy2control"</span>,</span>
+                    <span class="code-line">  <span class="code-string">"integrations"</span>: [</span>
+                    <span class="code-line">    {</span>
+                    <span class="code-line">      <span class="code-string">"type"</span>: <span class="code-string">"azure-devops"</span>,</span>
+                    <span class="code-line">      <span class="code-string">"events"</span>: [<span class="code-string">"workitem.created"</span>, <span class="code-string">"pullrequest.created"</span>],</span>
+                    <span class="code-line">      <span class="code-string">"actions"</span>: { <span class="code-string">"workitem.created"</span>: <span class="code-string">"auto-create-branch"</span> }</span>
+                    <span class="code-line">    }</span>
+                    <span class="code-line">  ]</span>
+                    <span class="code-line">}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Critical Thinking Section -->
+        <div id="critical-thinking" class="content-section">
+            <h2 class="section-title">Critical Thinking Framework</h2>
+            
+            <div class="highlight-box">
+                <p style="font-size: 1.2em; font-weight: 600; color: var(--nh-primary-blue);">
+                    Comprehensive Critical Thinking Framework integrated throughout our Agentic SDLC platform, ensuring systematic analysis, evidence-based decisions, and continuous validation.
+                </p>
+            </div>
+
+            <h3 class="subsection-title">12 Intellectual Standards for Technical Excellence</h3>
+            <div class="content-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
+                <div class="content-card" onclick="showCriticalStandardDetail('clarity')" style="background: #F5F5F5; border-radius: 12px; padding: 2rem; cursor: pointer; transition: all 0.3s ease; border: 2px solid transparent;">
+                    <h3 class="card-title" style="color: var(--nh-primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">🎯 Clarity</h3>
+                    <p>Each approach clearly defined with specific implementation details and architectural diagrams</p>
+                </div>
+                <div class="content-card" onclick="showCriticalStandardDetail('accuracy')" style="background: #F5F5F5; border-radius: 12px; padding: 2rem; cursor: pointer; transition: all 0.3s ease; border: 2px solid transparent;">
+                    <h3 class="card-title" style="color: var(--nh-primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">✅ Accuracy</h3>
+                    <p>All technical claims verified against industry case studies and technical documentation</p>
+                </div>
+                <div class="content-card" onclick="showCriticalStandardDetail('precision')" style="background: #F5F5F5; border-radius: 12px; padding: 2rem; cursor: pointer; transition: all 0.3s ease; border: 2px solid transparent;">
+                    <h3 class="card-title" style="color: var(--nh-primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">📊 Precision</h3>
+                    <p>Specific metrics provided: success rates by industry, risk assessments, timeline estimates</p>
+                </div>
+                <div class="content-card" onclick="showCriticalStandardDetail('relevance')" style="background: #F5F5F5; border-radius: 12px; padding: 2rem; cursor: pointer; transition: all 0.3s ease; border: 2px solid transparent;">
+                    <h3 class="card-title" style="color: var(--nh-primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">🔗 Relevance</h3>
+                    <p>Analysis focused on specific requirements and constraints</p>
+                </div>
+                <div class="content-card" onclick="showCriticalStandardDetail('depth')" style="background: #F5F5F5; border-radius: 12px; padding: 2rem; cursor: pointer; transition: all 0.3s ease; border: 2px solid transparent;">
+                    <h3 class="card-title" style="color: var(--nh-primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">🔍 Depth</h3>
+                    <p>Comprehensive examination of technical architecture and long-term implications</p>
+                </div>
+                <div class="content-card" onclick="showCriticalStandardDetail('breadth')" style="background: #F5F5F5; border-radius: 12px; padding: 2rem; cursor: pointer; transition: all 0.3s ease; border: 2px solid transparent;">
+                    <h3 class="card-title" style="color: var(--nh-primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">🌐 Breadth</h3>
+                    <p>Multiple perspectives considered: technical feasibility, business continuity, costs</p>
+                </div>
+                <div class="content-card" onclick="showCriticalStandardDetail('logic')" style="background: #F5F5F5; border-radius: 12px; padding: 2rem; cursor: pointer; transition: all 0.3s ease; border: 2px solid transparent;">
+                    <h3 class="card-title" style="color: var(--nh-primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">🧠 Logic</h3>
+                    <p>Sound reasoning chain: Current state → Problems → Solutions → Evaluation → Recommendation</p>
+                </div>
+                <div class="content-card" onclick="showCriticalStandardDetail('fairness')" style="background: #F5F5F5; border-radius: 12px; padding: 2rem; cursor: pointer; transition: all 0.3s ease; border: 2px solid transparent;">
+                    <h3 class="card-title" style="color: var(--nh-primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">⚖️ Fairness</h3>
+                    <p>Objective evaluation with balanced pros and cons, no predetermined bias</p>
+                </div>
+                <div class="content-card" onclick="showCriticalStandardDetail('significance')" style="background: #F5F5F5; border-radius: 12px; padding: 2rem; cursor: pointer; transition: all 0.3s ease; border: 2px solid transparent;">
+                    <h3 class="card-title" style="color: var(--nh-primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">❗ Significance</h3>
+                    <p>Focusing on what matters most for successful modernization</p>
+                </div>
+                <div class="content-card" onclick="showCriticalStandardDetail('completeness')" style="background: #F5F5F5; border-radius: 12px; padding: 2rem; cursor: pointer; transition: all 0.3s ease; border: 2px solid transparent;">
+                    <h3 class="card-title" style="color: var(--nh-primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">✨ Completeness</h3>
+                    <p>Covering all aspects from quick wins to long-term transformation</p>
+                </div>
+                <div class="content-card" onclick="showCriticalStandardDetail('consistency')" style="background: #F5F5F5; border-radius: 12px; padding: 2rem; cursor: pointer; transition: all 0.3s ease; border: 2px solid transparent;">
+                    <h3 class="card-title" style="color: var(--nh-primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">🔄 Consistency</h3>
+                    <p>Applying same rigorous analysis across all approaches</p>
+                </div>
+                <div class="content-card" onclick="showCriticalStandardDetail('sufficiency')" style="background: #F5F5F5; border-radius: 12px; padding: 2rem; cursor: pointer; transition: all 0.3s ease; border: 2px solid transparent;">
+                    <h3 class="card-title" style="color: var(--nh-primary-blue); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;">📏 Sufficiency</h3>
+                    <p>Providing adequate evidence and rationale for recommendations</p>
+                </div>
+            </div>
+
+            <h3 class="subsection-title" style="margin-top: 3rem;">Three-Phase Analysis Process</h3>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-title">Phase 1: Pre-Development Analysis</div>
+                    <p><strong>4 Techniques (60 seconds):</strong> Assumption identification, risk assessment, alternative approach evaluation, success criteria definition.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-title">Phase 2: Development Guidance</div>
+                    <p><strong>3 Techniques (45 seconds):</strong> Real-time validation, pattern compliance checking, security validation.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-title">Phase 3: Post-Development Verification</div>
+                    <p><strong>3 Techniques (45 seconds):</strong> Completeness verification, quality assurance, deployment readiness assessment.</p>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Trust Verification Framework</h3>
+            <div class="feature-grid">
+                <div class="feature-card" onclick="showCriticalThinkingDetail('factcheck')">
+                    <div class="feature-icon">✓</div>
+                    <div class="feature-title">Fact Checking</div>
+                    <p>Every claim and implementation detail is verified against source code and documentation.</p>
+                </div>
+                <div class="feature-card" onclick="showCriticalThinkingDetail('noassumptions')">
+                    <div class="feature-icon">🚫</div>
+                    <div class="feature-title">No Assumptions</div>
+                    <p>Explicitly identifies and validates all assumptions before proceeding with implementation.</p>
+                </div>
+                <div class="feature-card" onclick="showCriticalThinkingDetail('transparency')">
+                    <div class="feature-icon">👁️</div>
+                    <div class="feature-title">Full Transparency</div>
+                    <p>Complete audit trail of all decisions, validations, and reasoning processes.</p>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">Red Flag Detection</h3>
+            <div class="info-box warning-box">
+                <div class="info-box-title">Automated Red Flag Monitoring</div>
+                <p>• Claims without evidence • Vague statements • Missing error handling • Security vulnerabilities • Performance anti-patterns</p>
+            </div>
+
+            <h3 class="subsection-title">Success Metrics</h3>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value">90%</div>
+                    <div class="metric-label">Reduction in False Claims</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">85%</div>
+                    <div class="metric-label">Improvement in Code Quality</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">95%</div>
+                    <div class="metric-label">Security Issue Detection Rate</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">< 2.5min</div>
+                    <div class="metric-label">Total Analysis Time</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROI Section -->
+        <div id="roi" class="content-section">
+            <h2 class="section-title">Business Value & ROI</h2>
+            
+            <div class="highlight-box">
+                <p style="font-size: 1.2em; font-weight: 600; color: var(--nh-primary-blue);">
+                    Proven ROI with measurable improvements in development velocity, quality, and team satisfaction.
+                </p>
+            </div>
+
+            <h3 class="subsection-title">Key Performance Metrics</h3>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value">80%</div>
+                    <div class="metric-label">Reduction in Development Time</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">90%</div>
+                    <div class="metric-label">Fewer Production Bugs</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">5x</div>
+                    <div class="metric-label">Faster Code Reviews</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">65%</div>
+                    <div class="metric-label">Cost Reduction</div>
+                </div>
+            </div>
+
+            <h3 class="subsection-title">ROI Calculator</h3>
+            <div class="info-box success-box">
+                <div class="info-box-title">For 50 Developer Team</div>
+                <p>• Annual savings: $3.2M • Payback period: 3 months • 5-year ROI: 450%</p>
+            </div>
+
+            <h3 class="subsection-title">Success Stories</h3>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-title">Enterprise Financial Services</div>
+                    <p>Reduced deployment cycle from 3 weeks to 2 days with 99.9% accuracy in compliance validation.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-title">Global E-commerce Platform</div>
+                    <p>Achieved 80% reduction in post-deployment issues and 5x improvement in feature delivery speed.</p>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-title">Healthcare Technology Provider</div>
+                    <p>Maintained 100% HIPAA compliance while reducing development costs by 65%.</p>
+                </div>
+            </div>
+
+            <div class="cta-section">
+                <h2 class="cta-title">Ready to Transform Your Development Process?</h2>
+                <p style="font-size: 1.2em; margin-bottom: 30px;">Join leading enterprises using AI to revolutionize software development.</p>
+                <a href="#" class="cta-button" onclick="scheduleDemo()">Schedule Demo</a>
+                <a href="#" class="cta-button" onclick="downloadWhitepaper()">Download Whitepaper</a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-content">
+                <p>© 2025 North Highland. All rights reserved.</p>
+                <p style="margin-top: 20px;">Enterprise AI Solutions | Trusted by Fortune 500</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Controls -->
+    <div style="position: fixed; bottom: 2rem; right: 2rem; display: flex; gap: 1rem; z-index: 1000;">
+        <button onclick="navigatePrev()" class="nav-control" style="background: var(--nh-primary-blue); color: white; border: none; padding: 1rem; border-radius: 50%; width: 50px; height: 50px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+        </button>
+        <button onclick="navigateNext()" class="nav-control" style="background: var(--nh-primary-blue); color: white; border: none; padding: 1rem; border-radius: 50%; width: 50px; height: 50px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: all 0.3s ease; display: flex; align-items: center; justify-content: center;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Modals -->
+    <div id="standardModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h2 id="modalTitle" style="margin: 0; font-size: 1.8rem;"></h2>
+            </div>
+            <div class="modal-body" id="modalContent"></div>
+        </div>
+    </div>
+
+    <script>
+
+        // Section navigation
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => section.classList.remove('active'));
+            
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.nav-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected section
+            const selectedSection = document.getElementById(sectionId);
+            if (selectedSection) {
+                selectedSection.classList.add('active');
+                
+                // Mark corresponding tab as active
+                const activeTab = Array.from(tabs).find(tab => 
+                    tab.textContent.toLowerCase().includes(sectionId.split('-')[0])
+                );
+                if (activeTab) activeTab.classList.add('active');
+                
+                // Architecture diagram is now pure HTML/CSS, no rendering needed
+            }
+        }
+
+        // Navigation controls
+        function navigatePrev() {
+            const tabs = Array.from(document.querySelectorAll('.nav-tab'));
+            const activeTab = document.querySelector('.nav-tab.active');
+            const currentIndex = tabs.indexOf(activeTab);
+            
+            if (currentIndex > 0) {
+                tabs[currentIndex - 1].click();
+            }
+        }
+
+        function navigateNext() {
+            const tabs = Array.from(document.querySelectorAll('.nav-tab'));
+            const activeTab = document.querySelector('.nav-tab.active');
+            const currentIndex = tabs.indexOf(activeTab);
+            
+            if (currentIndex < tabs.length - 1) {
+                tabs[currentIndex + 1].click();
+            }
+        }
+
+        // Modal handlers
+        function closeModal() {
+            document.getElementById('standardModal').style.display = 'none';
+        }
+
+        // Pattern detail modals
+        const patternDetails = {
+            'event-driven': {
+                title: '🔧 Event-Driven Architecture',
+                content: `
+                    <h4 style="color: var(--nh-primary-blue); margin-bottom: 1rem;">Asynchronous Processing at Scale</h4>
+                    <p>Our event-driven architecture enables the platform to handle thousands of concurrent operations without blocking, ensuring optimal performance and scalability.</p>
+                    
+                    <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Key Features:</h4>
+                    <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                        <li>Event sourcing for complete audit trails</li>
+                        <li>Async message queuing with Redis Streams</li>
+                        <li>Event replay capabilities for debugging</li>
+                        <li>Distributed event processing with guaranteed delivery</li>
+                        <li>Real-time WebSocket event streaming to clients</li>
+                    </ul>
+                    
+                    <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Use Cases:</h4>
+                    <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                        <li>Parallel execution of Claude Code agents</li>
+                        <li>Asynchronous PR analysis and commenting</li>
+                        <li>Background pattern learning and optimization</li>
+                        <li>Real-time collaboration features</li>
+                    </ul>
+                    
+                    <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Implementation Files:</h4>
+                    <div style="background: #f5f5f5; padding: 1rem; border-radius: 4px; font-family: monospace; font-size: 0.9em;">
+                    • src/services/agent-communication-bus/main.py<br>
+                    • src/services/state_sync/app/main.py<br>
+                    • platform/ai-agents/pipeline-orchestration/agent_orchestrator.py
+                    </div>
+                `
+            },
+            'zero-trust': {
+                title: '🔒 Zero-Trust Security Architecture',
+                content: `
+                    <h4 style="color: var(--nh-primary-blue); margin-bottom: 1rem;">Enterprise-Grade Security</h4>
+                    <p>Implements defense-in-depth with zero-trust principles, ensuring that every request is authenticated, authorized, and encrypted.</p>
+                    
+                    <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Security Layers:</h4>
+                    <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                        <li>mTLS between all services</li>
+                        <li>JWT-based authentication with short-lived tokens</li>
+                        <li>Role-based access control (RBAC) with fine-grained permissions</li>
+                        <li>End-to-end encryption with AES-256-GCM</li>
+                        <li>Comprehensive audit logging for compliance</li>
+                    </ul>
+                    
+                    <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Compliance Features:</h4>
+                    <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                        <li>SOC2 Type II compliant architecture</li>
+                        <li>GDPR data privacy controls</li>
+                        <li>HIPAA-ready encryption and access controls</li>
+                        <li>ISO 27001 aligned security practices</li>
+                    </ul>
+                    
+                    <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Implementation Files:</h4>
+                    <div style="background: #f5f5f5; padding: 1rem; border-radius: 4px; font-family: monospace; font-size: 0.9em;">
+                    • src/services/trust_verification/app/main.py<br>
+                    • src/platform/gateway/main.py<br>
+                    • src/services/tenant_configuration/app/security.py<br>
+                    • docs/03-development/compliance/REGULATORY_COMPLIANCE.md
+                    </div>
+                `
+            },
+            'cqrs': {
+                title: '📊 CQRS Pattern Implementation',
+                content: `
+                    <h4 style="color: var(--nh-primary-blue); margin-bottom: 1rem;">Command Query Responsibility Segregation</h4>
+                    <p>Separates read and write operations to optimize performance, scalability, and data consistency across the distributed system.</p>
+                    
+                    <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Benefits:</h4>
+                    <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                        <li>Independent scaling of read and write operations</li>
+                        <li>Optimized data models for specific use cases</li>
+                        <li>Improved performance with read replicas</li>
+                        <li>Event sourcing integration for audit trails</li>
+                        <li>Simplified complex domain logic</li>
+                    </ul>
+                    
+                    <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Implementation Examples:</h4>
+                    <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                        <li>Context Intelligence: Separate read models for fast retrieval</li>
+                        <li>Pattern Learning: Write-optimized for pattern storage</li>
+                        <li>Admin Dashboard: Read-optimized for analytics</li>
+                        <li>Audit Logs: Append-only write model</li>
+                    </ul>
+                    
+                    <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Implementation Files:</h4>
+                    <div style="background: #f5f5f5; padding: 1rem; border-radius: 4px; font-family: monospace; font-size: 0.9em;">
+                    • src/services/context_intelligence/app/repository.py<br>
+                    • src/services/pattern_learning/app/models.py<br>
+                    • docs/02-architecture/system-architecture.md
+                    </div>
+                `
+            }
+        };
+
+        function showPatternDetail(pattern) {
+            const modal = document.getElementById('standardModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalContent = document.getElementById('modalContent');
+            
+            if (patternDetails[pattern]) {
+                modalTitle.innerHTML = patternDetails[pattern].title;
+                modalContent.innerHTML = patternDetails[pattern].content;
+                modal.style.display = 'block';
+            }
+        }
+
+        // Service detail modals
+        const serviceDetails = {
+            context: {
+                title: '🧠 Context Intelligence Service',
+                content: `
+                    <h4 style="color: var(--nh-primary-blue); margin-bottom: 1rem;">Advanced Memory Management</h4>
+                    <p>The Context Intelligence Service implements a revolutionary memory system that preserves and manages context across development sessions with 80-90% efficiency.</p>
+                    
+                    <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Key Features:</h4>
+                    <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                        <li>Semantic memory indexing with vector embeddings</li>
+                        <li>Cross-session context preservation</li>
+                        <li>Intelligent context pruning to optimize token usage</li>
+                        <li>Pattern-based memory retrieval</li>
+                        <li>Multi-tenant isolation with encryption</li>
+                    </ul>
+                    
+                    <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Technical Implementation:</h4>
+                    <div style="background: #f5f5f5; padding: 1rem; border-radius: 4px; font-family: monospace; font-size: 0.9em;">
+                    • Storage: PostgreSQL with JSONB for structured data<br>
+                    • Cache: Redis with 15-minute TTL<br>
+                    • Memory System: Custom pattern-based indexing<br>
+                    • Implementation: src/services/context_intelligence/app/main.py<br>
+                    • Documentation: docs/03-development/INTELLIGENT_CONTEXT_SELECTION.md<br>
+                    • API Docs: <a href="http://localhost:18008/docs" target="_blank">http://localhost:18008/docs</a>
+                    </div>
+                `
+            },
+            critical: {
+                title: '🔍 Critical Thinking Service',
+                content: `
+                    <h4 style="color: var(--nh-primary-blue); margin-bottom: 1rem;">Multi-Agent Validation System</h4>
+                    <p>Orchestrates 8 specialized Claude Code agents to perform comprehensive code analysis, ensuring quality, security, and compliance.</p>
+                    
+                    <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Agent Portfolio:</h4>
+                    <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                        <li>Code Quality Agent - Static analysis and maintainability</li>
+                        <li>Test Intelligence Agent - Coverage and test quality</li>
+                        <li>Dependency Security Agent - Vulnerability scanning</li>
+                        <li>Human Review Guidance Agent - Complexity analysis</li>
+                        <li>Performance Impact Agent - Performance profiling</li>
+                        <li>API Contract Validation Agent - Breaking changes</li>
+                        <li>Business Logic Validation Agent - Business rules</li>
+                        <li>Documentation Intelligence Agent - Doc completeness</li>
+                    </ul>
+                    
+                    <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Implementation Details:</h4>
+                    <div style="background: #f5f5f5; padding: 1rem; border-radius: 4px; font-family: monospace; font-size: 0.9em;">
+                    • Main Service: src/services/critical_thinking_enforcer/app/main.py<br>
+                    • Agent Orchestrator: platform/ai-agents/pipeline-orchestration/agent_orchestrator.py<br>
+                    • Documentation: docs/ai-agents/claude-integration/global/CRITICAL_THINKING_FRAMEWORK.md<br>
+                    • API Docs: <a href="http://localhost:18011/docs" target="_blank">http://localhost:18011/docs</a>
+                    </div>
+                `
+            },
+            pattern: {
+                title: '📊 Pattern Learning Service',
+                content: `
+                    <h4 style="color: var(--nh-primary-blue); margin-bottom: 1rem;">Intelligent Pattern Recognition</h4>
+                    <p>Continuously learns from development patterns to provide intelligent suggestions and improve platform efficiency over time.</p>
+                    
+                    <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Learning Capabilities:</h4>
+                    <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                        <li>Code pattern identification and cataloging</li>
+                        <li>Success/failure pattern analysis</li>
+                        <li>Team-specific pattern learning</li>
+                        <li>Cross-project pattern suggestions</li>
+                        <li>Performance optimization recommendations</li>
+                    </ul>
+                    
+                    <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Implementation Details:</h4>
+                    <div style="background: #f5f5f5; padding: 1rem; border-radius: 4px; font-family: monospace; font-size: 0.9em;">
+                    • Main Service: src/services/pattern_learning/app/main.py<br>
+                    • Learning Engine: .claude/engines/learning-engine.js<br>
+                    • Documentation: .claude/memory/patterns/README.md<br>
+                    • API Docs: <a href="http://localhost:18009/docs" target="_blank">http://localhost:18009/docs</a>
+                    </div>
+                `
+            },
+            state: {
+                title: '🔄 State Synchronization Service',
+                content: `
+                    <h4 style="color: var(--nh-primary-blue); margin-bottom: 1rem;">Distributed State Management</h4>
+                    <p>Ensures consistent state across all distributed services and sessions using advanced synchronization algorithms.</p>
+                    
+                    <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Key Features:</h4>
+                    <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                        <li>Real-time state synchronization</li>
+                        <li>Conflict resolution with CRDT</li>
+                        <li>Event-driven state updates</li>
+                        <li>State versioning and rollback</li>
+                        <li>WebSocket streaming for live updates</li>
+                    </ul>
+                    
+                    <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Implementation Details:</h4>
+                    <div style="background: #f5f5f5; padding: 1rem; border-radius: 4px; font-family: monospace; font-size: 0.9em;">
+                    • Main Service: src/services/state_sync/app/main.py<br>
+                    • WebSocket Handler: src/services/state_sync/app/websocket.py<br>
+                    • Documentation: docs/02-architecture/MONITORING_OBSERVABILITY_ARCHITECTURE.md<br>
+                    • API Docs: <a href="http://localhost:18010/docs" target="_blank">http://localhost:18010/docs</a>
+                    </div>
+                `
+            },
+            session: {
+                title: '🤝 Session Handoff Service',
+                content: `
+                    <h4 style="color: var(--nh-primary-blue); margin-bottom: 1rem;">Seamless Context Transfer</h4>
+                    <p>Enables smooth transitions between AI agents and human developers, preserving full context and knowledge.</p>
+                    
+                    <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Handoff Capabilities:</h4>
+                    <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                        <li>Complete context preservation during handoff</li>
+                        <li>Visual state representation with Mermaid diagrams</li>
+                        <li>Work item and PR context transfer</li>
+                        <li>Knowledge graph serialization</li>
+                        <li>Session replay capabilities</li>
+                    </ul>
+                    
+                    <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Implementation Details:</h4>
+                    <div style="background: #f5f5f5; padding: 1rem; border-radius: 4px; font-family: monospace; font-size: 0.9em;">
+                    • Main Service: src/services/session_handoff/app/main.py<br>
+                    • Handoff Protocol: docs/development/workflows/GIT_MEMORY_CONTINUITY.md<br>
+                    • Documentation: .claude/memory/context/README.md<br>
+                    • API Docs: <a href="http://localhost:18006/docs" target="_blank">http://localhost:18006/docs</a>
+                    </div>
+                `
+            },
+            trust: {
+                title: '🛡️ Trust Verification Service',
+                content: `
+                    <h4 style="color: var(--nh-primary-blue); margin-bottom: 1rem;">AI Output Validation</h4>
+                    <p>Validates all AI-generated outputs against trust criteria, ensuring accuracy and preventing hallucinations.</p>
+                    
+                    <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Verification Methods:</h4>
+                    <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                        <li>Fact-checking against source code</li>
+                        <li>Claim verification with evidence</li>
+                        <li>Hallucination detection algorithms</li>
+                        <li>Consistency validation across outputs</li>
+                        <li>Confidence scoring and thresholds</li>
+                    </ul>
+                    
+                    <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Implementation Details:</h4>
+                    <div style="background: #f5f5f5; padding: 1rem; border-radius: 4px; font-family: monospace; font-size: 0.9em;">
+                    • Main Service: src/services/trust_verification/app/main.py<br>
+                    • Trust Framework: docs/ai-agents/claude-integration/global/TRUST_VIOLATION_PREVENTION.md<br>
+                    • Validation Rules: src/services/trust_verification/app/validators.py<br>
+                    • API Docs: <a href="http://localhost:18007/docs" target="_blank">http://localhost:18007/docs</a>
+                    </div>
+                `
+            },
+            tenant: {
+                title: '⚙️ Tenant Configuration Service',
+                content: `
+                    <h4 style="color: var(--nh-primary-blue); margin-bottom: 1rem;">Centralized Configuration Management</h4>
+                    <p>Manages all tenant-specific configurations with encryption, versioning, and comprehensive audit logging.</p>
+                    
+                    <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Configuration Features:</h4>
+                    <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                        <li>AES-256-GCM encryption for sensitive data</li>
+                        <li>Version control for all configurations</li>
+                        <li>Multi-environment support (dev/staging/prod)</li>
+                        <li>Real-time configuration updates</li>
+                        <li>Comprehensive audit trail</li>
+                    </ul>
+                    
+                    <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Implementation Details:</h4>
+                    <div style="background: #f5f5f5; padding: 1rem; border-radius: 4px; font-family: monospace; font-size: 0.9em;">
+                    • Main Service: src/services/tenant_configuration/app/main.py<br>
+                    • Encryption: src/services/tenant_configuration/app/security.py<br>
+                    • Documentation: docs/06-operations/TENANT_CONFIGURATION_MANAGEMENT.md<br>
+                    • API Docs: <a href="http://localhost:18011/docs" target="_blank">http://localhost:18011/docs</a>
+                    </div>
+                `
+            },
+            admin: {
+                title: '👑 Admin Dashboard Service',
+                content: `
+                    <h4 style="color: var(--nh-primary-blue); margin-bottom: 1rem;">Unified Platform Management</h4>
+                    <p>Comprehensive administrative interface for managing tenants, monitoring system health, and configuring platform settings.</p>
+                    
+                    <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Dashboard Features:</h4>
+                    <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                        <li>Real-time system metrics and monitoring</li>
+                        <li>Tenant management and provisioning</li>
+                        <li>User and role administration</li>
+                        <li>Claude usage analytics and reporting</li>
+                        <li>Configuration management UI</li>
+                    </ul>
+                    
+                    <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Implementation Details:</h4>
+                    <div style="background: #f5f5f5; padding: 1rem; border-radius: 4px; font-family: monospace; font-size: 0.9em;">
+                    • Main Service: src/services/admin_dashboard/app/main.py<br>
+                    • UI Components: src/services/admin_dashboard/app/ui/<br>
+                    • Documentation: docs/06-operations/ADMIN_DASHBOARD_GUIDE.md<br>
+                    • API Docs: <a href="http://localhost:18012/docs" target="_blank">http://localhost:18012/docs</a>
+                    </div>
+                `
+            }
+        };
+
+        function showServiceDetail(service) {
+            const modal = document.getElementById('standardModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalContent = document.getElementById('modalContent');
+            
+            if (serviceDetails[service]) {
+                modalTitle.innerHTML = serviceDetails[service].title;
+                modalContent.innerHTML = serviceDetails[service].content;
+                modal.style.display = 'block';
+            }
+        }
+
+        // Critical thinking standards detail modals
+        function showCriticalStandardDetail(standard) {
+            const standardDetails = {
+                clarity: {
+                    title: "🎯 Clarity - Making Complex Simple",
+                    content: `
+                        <p><strong>What it means:</strong> Every technical concept, architecture decision, and implementation approach is explained in clear, unambiguous terms that all stakeholders can understand.</p>
+
+                        <h4>How we ensure clarity:</h4>
+                        <ul>
+                            <li>✅ Visual diagrams for each architectural approach</li>
+                            <li>✅ Plain language explanations alongside technical details</li>
+                            <li>✅ Concrete examples from real implementations</li>
+                            <li>✅ Step-by-step breakdowns of complex processes</li>
+                        </ul>
+
+                        <h4>Example in our analysis:</h4>
+                        <p>Instead of just saying "Service Layer Extraction," we show exactly how components are refactored into clean service interfaces with specific code examples.</p>
+                    `
+                },
+                accuracy: {
+                    title: "✅ Accuracy - Evidence-Based Analysis",
+                    content: `
+                        <p><strong>What it means:</strong> Every claim, metric, and recommendation is backed by verifiable evidence from real implementations, industry studies, or technical documentation.</p>
+
+                        <h4>Our verification process:</h4>
+                        <ul>
+                            <li>📊 Cross-referenced with 15+ case studies</li>
+                            <li>📚 Validated against technical documentation</li>
+                            <li>🔍 Fact-checked with industry experts</li>
+                            <li>✅ Tested approaches in proof-of-concepts</li>
+                        </ul>
+
+                        <h4>Example verification:</h4>
+                        <p>Success rates are derived from analyzing documented implementations across multiple industries from 2022-2025.</p>
+                    `
+                },
+                precision: {
+                    title: "📊 Precision - Specific, Measurable Details",
+                    content: `
+                        <p><strong>What it means:</strong> We provide exact numbers, specific timelines, and measurable metrics rather than vague generalizations.</p>
+
+                        <h4>Precision in our analysis:</h4>
+                        <ul>
+                            <li>⏱️ Timeline estimates in months, not "short/long term"</li>
+                            <li>💰 Cost implications with percentage ranges</li>
+                            <li>📈 Risk scores on a 1-10 scale with justification</li>
+                            <li>🎯 Success rates as specific percentages</li>
+                        </ul>
+
+                        <h4>Example precision:</h4>
+                        <p>Implementation timelines: 15-18 months, Risk scores: 3.5/10, Success rates: 82% in enterprises, Team size: 6-8 developers.</p>
+                    `
+                },
+                relevance: {
+                    title: "🔗 Relevance - Focused on Your Needs",
+                    content: `
+                        <p><strong>What it means:</strong> Every aspect of our analysis directly addresses your specific situation, constraints, and goals.</p>
+
+                        <h4>Tailored to your context:</h4>
+                        <ul>
+                            <li>🎯 Your specific technology stack considered</li>
+                            <li>💾 Database architecture factored in</li>
+                            <li>👥 Team constraints addressed</li>
+                            <li>📅 Timeline requirements met</li>
+                        </ul>
+
+                        <h4>Filtered for relevance:</h4>
+                        <p>We exclude approaches that don't align with your immediate needs and constraints, focusing only on viable solutions.</p>
+                    `
+                },
+                depth: {
+                    title: "🔍 Depth - Comprehensive Analysis",
+                    content: `
+                        <p><strong>What it means:</strong> We go beyond surface-level recommendations to examine implementation details, edge cases, and long-term implications.</p>
+
+                        <h4>Deep dive includes:</h4>
+                        <ul>
+                            <li>🏗️ Detailed architectural patterns</li>
+                            <li>⚠️ Hidden risks and mitigation strategies</li>
+                            <li>🔄 Long-term maintenance implications</li>
+                            <li>💡 Lessons learned from failures</li>
+                        </ul>
+
+                        <h4>Example depth:</h4>
+                        <p>We analyze specific failure modes, quantify maintenance overhead growth rates, and provide adaptive strategies.</p>
+                    `
+                },
+                breadth: {
+                    title: "🌐 Breadth - Multiple Perspectives",
+                    content: `
+                        <p><strong>What it means:</strong> We consider technical, business, operational, and strategic perspectives to ensure a holistic view.</p>
+
+                        <h4>Perspectives examined:</h4>
+                        <ul>
+                            <li>💻 Technical feasibility and complexity</li>
+                            <li>💼 Business continuity and risk</li>
+                            <li>💰 Financial implications and ROI</li>
+                            <li>👥 Team skills and training needs</li>
+                            <li>⏱️ Timeline and resource constraints</li>
+                            <li>🔧 Operational maintenance burden</li>
+                        </ul>
+
+                        <h4>Balanced view:</h4>
+                        <p>Each approach is evaluated not just on technical merit, but on how it impacts your entire organization.</p>
+                    `
+                },
+                logic: {
+                    title: "🧠 Logic - Sound Reasoning",
+                    content: `
+                        <p><strong>What it means:</strong> Our recommendations follow a clear, logical progression from evidence to conclusion with no gaps in reasoning.</p>
+
+                        <h4>Our logical framework:</h4>
+                        <ol>
+                            <li>📊 Current state assessment</li>
+                            <li>🎯 Goal definition</li>
+                            <li>🔍 Approach identification</li>
+                            <li>📈 Evidence gathering</li>
+                            <li>⚖️ Comparative analysis</li>
+                            <li>✅ Recommendation</li>
+                        </ol>
+
+                        <h4>Logical validation:</h4>
+                        <p>Each step builds on the previous, with clear cause-and-effect relationships and no logical leaps.</p>
+                    `
+                },
+                fairness: {
+                    title: "⚖️ Fairness - Objective Evaluation",
+                    content: `
+                        <p><strong>What it means:</strong> We present all approaches objectively, acknowledging both strengths and weaknesses without bias toward any particular solution.</p>
+
+                        <h4>Ensuring objectivity:</h4>
+                        <ul>
+                            <li>✅ Equal analysis depth for all approaches</li>
+                            <li>📊 Consistent evaluation criteria applied</li>
+                            <li>🔍 Both successes and failures documented</li>
+                            <li>💭 Assumptions clearly stated</li>
+                        </ul>
+
+                        <h4>No hidden agenda:</h4>
+                        <p>Even our recommended approach includes clear warnings about complexity and required expertise.</p>
+                    `
+                },
+                significance: {
+                    title: "❗ Significance - Focus on What Matters",
+                    content: `
+                        <p><strong>What it means:</strong> We emphasize the most important factors for your specific modernization goals, not generic best practices.</p>
+
+                        <h4>How we ensure significance:</h4>
+                        <ul>
+                            <li>✅ Prioritizing stated pain points</li>
+                            <li>✅ Highlighting critical success factors</li>
+                            <li>✅ Focusing on business impact over technical elegance</li>
+                            <li>✅ Addressing the "why" before the "how"</li>
+                        </ul>
+
+                        <h4>Example in our analysis:</h4>
+                        <p>We structure our entire recommendation around eliminating identified pain points and achieving specific business goals.</p>
+                    `
+                },
+                completeness: {
+                    title: "✨ Completeness - The Full Picture",
+                    content: `
+                        <p><strong>What it means:</strong> Every viable approach is considered, from quick tactical fixes to strategic transformations.</p>
+
+                        <h4>How we ensure completeness:</h4>
+                        <ul>
+                            <li>✅ Multiple distinct approaches analyzed</li>
+                            <li>✅ Timeline ranges from months to years</li>
+                            <li>✅ Risk profiles from conservative to innovative</li>
+                            <li>✅ Including modern AI-powered solutions</li>
+                        </ul>
+
+                        <h4>Example in our analysis:</h4>
+                        <p>We present all viable options with honest assessments, letting you choose based on your constraints.</p>
+                    `
+                },
+                consistency: {
+                    title: "🔄 Consistency - Uniform Standards Applied",
+                    content: `
+                        <p><strong>What it means:</strong> The same evaluation criteria and depth of analysis applied to every approach, preventing bias.</p>
+
+                        <h4>How we ensure consistency:</h4>
+                        <ul>
+                            <li>✅ Same scoring matrix for all approaches</li>
+                            <li>✅ Equal detail in pros and cons analysis</li>
+                            <li>✅ Examples provided for each option</li>
+                            <li>✅ Risk assessments using same scale</li>
+                        </ul>
+
+                        <h4>Example in our analysis:</h4>
+                        <p>We apply the same rigorous evaluation framework and provide comparable levels of detail for all options.</p>
+                    `
+                },
+                sufficiency: {
+                    title: "📏 Sufficiency - Adequate Evidence Provided",
+                    content: `
+                        <p><strong>What it means:</strong> Providing enough evidence, examples, and rationale for stakeholders to make informed decisions.</p>
+
+                        <h4>How we ensure sufficiency:</h4>
+                        <ul>
+                            <li>✅ Real company case studies for validation</li>
+                            <li>✅ Specific timeline and cost estimates</li>
+                            <li>✅ Technical implementation details</li>
+                            <li>✅ Decision criteria and frameworks</li>
+                        </ul>
+
+                        <h4>Example in our analysis:</h4>
+                        <p>We provide phased implementation plans, specific timelines, risk mitigation strategies, and success metrics.</p>
+                    `
+                }
+            };
+
+            const detail = standardDetails[standard];
+            if (detail) {
+                const modal = document.getElementById('serviceModal');
+                const modalTitle = document.getElementById('modalTitle');
+                const modalContent = document.getElementById('modalContent');
+                
+                modalTitle.innerHTML = detail.title;
+                modalContent.innerHTML = detail.content;
+                modal.style.display = 'block';
+            }
+        }
+
+        // Critical thinking detail modals
+        function showCriticalThinkingDetail(aspect) {
+            const aspects = {
+                factcheck: {
+                    title: '✓ Fact Checking Framework',
+                    content: `
+                        <h4 style="color: var(--nh-primary-blue); margin-bottom: 1rem;">Evidence-Based Validation</h4>
+                        <p>Every claim, implementation detail, and technical decision is verified against actual source code, documentation, and proven best practices.</p>
+                        
+                        <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Verification Process:</h4>
+                        <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                            <li>Source code cross-referencing</li>
+                            <li>Documentation validation</li>
+                            <li>API contract verification</li>
+                            <li>Performance benchmark validation</li>
+                            <li>Security claim verification</li>
+                        </ul>
+                        
+                        <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Red Flags Detected:</h4>
+                        <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                            <li>Unsubstantiated performance claims</li>
+                            <li>Missing error handling scenarios</li>
+                            <li>Incomplete implementation details</li>
+                            <li>Contradictory statements</li>
+                        </ul>
+                    `
+                },
+                noassumptions: {
+                    title: '🚫 No Assumptions Policy',
+                    content: `
+                        <h4 style="color: var(--nh-primary-blue); margin-bottom: 1rem;">Explicit Validation</h4>
+                        <p>The platform explicitly identifies and validates all assumptions before proceeding with any implementation or recommendation.</p>
+                        
+                        <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Assumption Detection:</h4>
+                        <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                            <li>Environment assumptions (OS, versions, dependencies)</li>
+                            <li>Permission and access assumptions</li>
+                            <li>Data format and structure assumptions</li>
+                            <li>Performance characteristic assumptions</li>
+                            <li>Integration compatibility assumptions</li>
+                        </ul>
+                        
+                        <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Validation Methods:</h4>
+                        <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                            <li>Explicit prerequisite checking</li>
+                            <li>Runtime environment validation</li>
+                            <li>Dependency verification</li>
+                            <li>Compatibility testing</li>
+                        </ul>
+                    `
+                },
+                transparency: {
+                    title: '👁️ Full Transparency',
+                    content: `
+                        <h4 style="color: var(--nh-primary-blue); margin-bottom: 1rem;">Complete Audit Trail</h4>
+                        <p>Every decision, validation, and reasoning process is fully documented and available for review.</p>
+                        
+                        <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Transparency Features:</h4>
+                        <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                            <li>Decision reasoning documentation</li>
+                            <li>Validation process logging</li>
+                            <li>Alternative approach documentation</li>
+                            <li>Risk assessment records</li>
+                            <li>Performance impact analysis</li>
+                        </ul>
+                        
+                        <h4 style="color: var(--nh-primary-blue); margin: 2rem 0 1rem 0;">Audit Capabilities:</h4>
+                        <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                            <li>Full decision replay</li>
+                            <li>Point-in-time analysis</li>
+                            <li>Compliance reporting</li>
+                            <li>Performance tracking</li>
+                        </ul>
+                    `
+                }
+            };
+            
+            if (aspects[aspect]) {
+                const modal = document.getElementById('standardModal');
+                const modalTitle = document.getElementById('modalTitle');
+                const modalContent = document.getElementById('modalContent');
+                
+                modalTitle.innerHTML = aspects[aspect].title;
+                modalContent.innerHTML = aspects[aspect].content;
+                modal.style.display = 'block';
+            }
+        }
+
+        // Demo functions
+        function scheduleDemo() {
+            alert('Demo scheduling feature coming soon!');
+        }
+
+        function downloadWhitepaper() {
+            alert('Whitepaper download coming soon!');
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('standardModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            const tabs = Array.from(document.querySelectorAll('.nav-tab'));
+            const activeTab = document.querySelector('.nav-tab.active');
+            const currentIndex = tabs.indexOf(activeTab);
+            
+            if (e.key === 'ArrowLeft' && currentIndex > 0) {
+                tabs[currentIndex - 1].click();
+            } else if (e.key === 'ArrowRight' && currentIndex < tabs.length - 1) {
+                tabs[currentIndex + 1].click();
+            } else if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Initialize on load
+        window.addEventListener('load', function() {
+            // Any initialization code
+        });
+    </script>
+</body>
+</html>

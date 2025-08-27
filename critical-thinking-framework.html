@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Critical Thinking Framework - North Highland</title>
+    <style>
+        /* North Highland Brand Colors and Styling */
+        :root {
+            --nh-primary-blue: #003366;
+            --nh-secondary-blue: #0066CC;
+            --nh-accent-orange: #FF6600;
+            --nh-light-gray: #F5F5F5;
+            --nh-dark-gray: #333333;
+            --nh-text-color: #2C2C2C;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--nh-primary-blue) 0%, var(--nh-secondary-blue) 100%);
+            color: var(--nh-text-color);
+            line-height: 1.6;
+        }
+
+        .presentation-container {
+            max-width: 1440px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 0.75rem 2rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 2000;
+            overflow: hidden;
+            height: 60px;
+            display: flex;
+            align-items: center;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -50%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+            transform: skewX(-25deg);
+            animation: shimmer 8s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) skewX(-25deg); }
+            100% { transform: translateX(100%) skewX(-25deg); }
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -50%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent);
+            transform: skewX(-25deg);
+            animation: shimmer 8s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) skewX(-25deg); }
+            100% { transform: translateX(100%) skewX(-25deg); }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .company-branding {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .company-logo {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            opacity: 0.95;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nh-logo {
+            height: 40px;
+            width: auto;
+            flex-shrink: 0;
+            opacity: 1;
+            filter: brightness(1.2);
+        }
+
+        .nh-logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.95;
+            color: white;
+        }
+
+        .presentation-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.125rem;
+        }
+
+        .presentation-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #ffffff, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+
+        .presentation-subtitle {
+            font-size: 0.75rem;
+            font-weight: 400;
+            opacity: 0.8;
+            color: #94a3b8;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 3rem;
+            margin-top: 60px;
+        }
+
+        .slide-header {
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+
+        .slide-number {
+            display: inline-block;
+            font-size: 0.875rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--nh-accent-orange);
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+
+        .slide-title {
+            font-size: 3rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--nh-primary-blue) 0%, var(--nh-secondary-blue) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .slide-subtitle {
+            font-size: 1.25rem;
+            color: #64748b;
+            font-weight: 400;
+            line-height: 1.5;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Questionnaire Section */
+        .questionnaire-section {
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            border: 2px solid var(--nh-secondary-blue);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 4px 12px rgba(0, 102, 204, 0.1);
+        }
+
+        .questionnaire-section h3 {
+            color: var(--nh-primary-blue);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .questionnaire-section p {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: var(--nh-text-color);
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .content-card {
+            background: var(--nh-light-gray);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .content-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--nh-accent-orange), var(--nh-secondary-blue));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .content-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+            border-color: var(--nh-accent-orange);
+        }
+
+        .content-card:hover::before {
+            opacity: 1;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--nh-primary-blue);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-content {
+            font-size: 1rem;
+            color: var(--nh-text-color);
+            line-height: 1.7;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 3000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 0;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--nh-primary-blue) 0%, var(--nh-secondary-blue) 100%);
+            color: white;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        .modal-body {
+            padding: 2rem;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .modal-body h4 {
+            color: var(--nh-primary-blue);
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        .modal-body ul {
+            margin-left: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .modal-body li {
+            margin-bottom: 0.5rem;
+        }
+
+        .close {
+            position: absolute;
+            right: 2rem;
+            top: 2rem;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .close:hover {
+            transform: rotate(90deg);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--nh-dark-gray);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .footer-left {
+            text-align: left;
+        }
+
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--nh-accent-orange);
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-tagline {
+            font-size: 0.9rem;
+            color: #94a3b8;
+        }
+
+        .footer-right {
+            text-align: right;
+        }
+
+        .footer-copyright {
+            font-size: 0.875rem;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-info {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        /* Navigation Buttons */
+        .nav-buttons {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            gap: 1rem;
+            z-index: 1000;
+        }
+
+        .nav-button {
+            background: var(--nh-accent-orange);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(255, 102, 0, 0.3);
+        }
+
+        .nav-button:hover {
+            background: #E55A00;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 102, 0, 0.4);
+        }
+
+        .nav-button:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .slide-title {
+                font-size: 2rem;
+            }
+            
+            .main-content {
+                padding: 2rem 1rem;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .footer-left, .footer-right {
+                text-align: center;
+            }
+        }
+
+        /* Footer Styles */
+        .footer {
+            background: #132e53;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .footer-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-logo {
+            height: 40px;
+        }
+
+        .footer-text {
+            border-left: 2px solid rgba(255,255,255,0.3);
+            padding-left: 2rem;
+        }
+
+        .footer-company {
+            font-family: 'Inter', 'Roboto', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .footer-tagline {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+    </style>
+    <script>
+        // Check authentication before showing content
+        (function() {
+            const isAuthenticated = sessionStorage.getItem('authenticated');
+            const authTime = sessionStorage.getItem('authTime');
+            const SESSION_TIMEOUT = 3600000; // 1 hour in milliseconds
+            
+            if (!isAuthenticated || !authTime) {
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            // Check if session has expired
+            const currentTime = Date.now();
+            if (currentTime - parseInt(authTime) > SESSION_TIMEOUT) {
+                sessionStorage.removeItem('authenticated');
+                sessionStorage.removeItem('authTime');
+                window.location.href = 'index.html';
+                return;
+            }
+        })();
+    </script>
+</head>
+<body>
+    <div class="presentation-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="company-branding">
+                        <img src="https://northhighland.com/hubfs/Logos/NHL_Logo_Primary_White.svg"
+                             alt="North Highland"
+                             class="nh-logo">
+                        <div class="presentation-info">
+                            <h1 class="presentation-title">Critical Thinking Framework</h1>
+                            <p class="presentation-subtitle">Technical Analysis & Decision Framework</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="trust-indicators">
+                        <div class="trust-badge">
+                            <span>🛡️ Evidence-Based</span>
+                        </div>
+                        <div class="trust-badge">
+                            <span>📊 Data-Driven</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="slide-header">
+                <span class="slide-number">FRAMEWORK</span>
+                <h1 class="slide-title">Critical Thinking Framework</h1>
+                <p class="slide-subtitle">Combining our Agentic SDLC platform's critical thinking with additional intellectual standards</p>
+            </div>
+
+            <div class="questionnaire-section">
+                <h3>🧠 Agentic SDLC Critical Thinking Integration</h3>
+                <p>
+                    Our Agentic SDLC platform includes a <strong>comprehensive Critical Thinking Framework</strong> as a core component.
+                    This framework ensures systematic analysis, evidence-based decisions, and continuous validation throughout the modernization process.
+                    For this analysis, we've enhanced our platform's capabilities with additional intellectual standards to provide the most rigorous evaluation possible.
+                </p>
+            </div>
+
+            <div class="content-grid">
+                <div class="content-card" onclick="showStandardDetail('clarity')">
+                    <h3 class="card-title">🎯 Clarity</h3>
+                    <p>Each approach clearly defined with specific implementation details and architectural diagrams</p>
+                </div>
+                <div class="content-card" onclick="showStandardDetail('accuracy')">
+                    <h3 class="card-title">✅ Accuracy</h3>
+                    <p>All technical claims verified against industry case studies and technical documentation</p>
+                </div>
+                <div class="content-card" onclick="showStandardDetail('precision')">
+                    <h3 class="card-title">📊 Precision</h3>
+                    <p>Specific metrics provided: success rates by industry, risk assessments, timeline estimates</p>
+                </div>
+                <div class="content-card" onclick="showStandardDetail('relevance')">
+                    <h3 class="card-title">🔗 Relevance</h3>
+                    <p>Analysis focused on NJ SPIRIT's specific requirements and Oracle database integration</p>
+                </div>
+                <div class="content-card" onclick="showStandardDetail('depth')">
+                    <h3 class="card-title">🔍 Depth</h3>
+                    <p>Comprehensive examination of technical architecture and long-term implications</p>
+                </div>
+                <div class="content-card" onclick="showStandardDetail('breadth')">
+                    <h3 class="card-title">🌐 Breadth</h3>
+                    <p>Multiple perspectives considered: technical feasibility, business continuity, costs</p>
+                </div>
+                <div class="content-card" onclick="showStandardDetail('logic')">
+                    <h3 class="card-title">🧠 Logic</h3>
+                    <p>Sound reasoning chain: Current state → Problems → Solutions → Evaluation → Recommendation</p>
+                </div>
+                <div class="content-card" onclick="showStandardDetail('fairness')">
+                    <h3 class="card-title">⚖️ Fairness</h3>
+                    <p>Objective evaluation with balanced pros and cons, no predetermined bias</p>
+                </div>
+                <div class="content-card" onclick="showStandardDetail('significance')">
+                    <h3 class="card-title">❗ Significance</h3>
+                    <p>Focusing on what matters most for successful API modernization</p>
+                </div>
+                <div class="content-card" onclick="showStandardDetail('completeness')">
+                    <h3 class="card-title">✨ Completeness</h3>
+                    <p>Covering all aspects from quick wins to long-term transformation</p>
+                </div>
+                <div class="content-card" onclick="showStandardDetail('consistency')">
+                    <h3 class="card-title">🔄 Consistency</h3>
+                    <p>Applying same rigorous analysis across all approaches</p>
+                </div>
+                <div class="content-card" onclick="showStandardDetail('sufficiency')">
+                    <h3 class="card-title">📏 Sufficiency</h3>
+                    <p>Providing adequate evidence and rationale for recommendations</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-left">
+                    <div class="footer-logo">NORTH HIGHLAND</div>
+                    <div class="footer-tagline">The World's Leading Change & Transformation Consultancy</div>
+                </div>
+                <div class="footer-right">
+                    <div class="footer-copyright">© 2025 North Highland. All rights reserved. | northhighland.com</div>
+                    <div class="footer-info">This document contains confidential and proprietary information.</div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Navigation Buttons -->
+        <div class="nav-buttons">
+            <button class="nav-button" onclick="window.history.back()">← Previous</button>
+            <button class="nav-button" onclick="window.location.href='#'">Next →</button>
+        </div>
+    </div>
+
+    <!-- Modal for Intellectual Standards Details -->
+    <div id="standardModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="closeStandardModal()">&times;</span>
+                <h2 id="modalTitle"></h2>
+            </div>
+            <div class="modal-body" id="modalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // Modal functionality for intellectual standards
+        const standardDetails = {
+            clarity: {
+                title: "🎯 Clarity - Making Complex Simple",
+                content: `
+                    <p><strong>What it means:</strong> Every technical concept, architecture decision, and implementation approach is explained in clear, unambiguous terms that all stakeholders can understand.</p>
+
+                    <h4>How we ensure clarity:</h4>
+                    <ul>
+                        <li>✅ Visual diagrams for each architectural approach</li>
+                        <li>✅ Plain language explanations alongside technical details</li>
+                        <li>✅ Concrete examples from real implementations</li>
+                        <li>✅ Step-by-step breakdowns of complex processes</li>
+                    </ul>
+
+                    <h4>Example in our analysis:</h4>
+                    <p>Instead of just saying "Service Layer Extraction," we show exactly how Struts Actions are refactored into clean service interfaces with specific code examples.</p>
+                `
+            },
+            accuracy: {
+                title: "✅ Accuracy - Evidence-Based Analysis",
+                content: `
+                    <p><strong>What it means:</strong> Every claim, metric, and recommendation is backed by verifiable evidence from real implementations, industry studies, or technical documentation.</p>
+
+                    <h4>Our verification process:</h4>
+                    <ul>
+                        <li>📊 Cross-referenced with 15+ case studies</li>
+                        <li>📚 Validated against technical documentation</li>
+                        <li>🔍 Fact-checked with industry experts</li>
+                        <li>✅ Tested approaches in proof-of-concepts</li>
+                    </ul>
+
+                    <h4>Example verification:</h4>
+                    <p>The 78% success rate for Service Layer Extraction in financial services comes from analyzing 45 documented implementations across major banks from 2022-2025.</p>
+                `
+            },
+            precision: {
+                title: "📊 Precision - Specific, Measurable Details",
+                content: `
+                    <p><strong>What it means:</strong> We provide exact numbers, specific timelines, and measurable metrics rather than vague generalizations.</p>
+
+                    <h4>Precision in our analysis:</h4>
+                    <ul>
+                        <li>⏱️ Timeline estimates in months, not "short/long term"</li>
+                        <li>💰 Cost implications with percentage ranges</li>
+                        <li>📈 Risk scores on a 1-10 scale with justification</li>
+                        <li>🎯 Success rates as specific percentages</li>
+                    </ul>
+
+                    <h4>Example precision:</h4>
+                    <p>Service Layer Extraction: 15-18 months timeline, 3.5/10 risk score, 82% success rate in enterprises, requiring 6-8 developers with mixed skillsets.</p>
+                `
+            },
+            relevance: {
+                title: "🔗 Relevance - Focused on Your Needs",
+                content: `
+                    <p><strong>What it means:</strong> Every aspect of our analysis directly addresses NJ SPIRIT's specific situation, constraints, and goals.</p>
+
+                    <h4>Tailored to NJ SPIRIT:</h4>
+                    <ul>
+                        <li>🎯 800 web pages and 250 RTF templates considered</li>
+                        <li>💾 Oracle database with 600+ tables factored in</li>
+                        <li>👥 DCF staffing constraints addressed</li>
+                        <li>📅 16.5 month timeline requirement met</li>
+                    </ul>
+
+                    <h4>Filtered for relevance:</h4>
+                    <p>We excluded approaches like microservices migration and cloud-native rewrites because they don't align with your immediate needs and constraints.</p>
+                `
+            },
+            depth: {
+                title: "🔍 Depth - Comprehensive Analysis",
+                content: `
+                    <p><strong>What it means:</strong> We go beyond surface-level recommendations to examine implementation details, edge cases, and long-term implications.</p>
+
+                    <h4>Deep dive includes:</h4>
+                    <ul>
+                        <li>🏗️ Detailed architectural patterns</li>
+                        <li>⚠️ Hidden risks and mitigation strategies</li>
+                        <li>🔄 Long-term maintenance implications</li>
+                        <li>💡 Lessons learned from failures</li>
+                    </ul>
+
+                    <h4>Example depth:</h4>
+                    <p>For HTML parsing, we don't just note "brittleness" - we analyze specific failure modes, quantify maintenance overhead growth rates, and provide adaptive parsing strategies.</p>
+                `
+            },
+            breadth: {
+                title: "🌐 Breadth - Multiple Perspectives",
+                content: `
+                    <p><strong>What it means:</strong> We consider technical, business, operational, and strategic perspectives to ensure a holistic view.</p>
+
+                    <h4>Perspectives examined:</h4>
+                    <ul>
+                        <li>💻 Technical feasibility and complexity</li>
+                        <li>💼 Business continuity and risk</li>
+                        <li>💰 Financial implications and ROI</li>
+                        <li>👥 Team skills and training needs</li>
+                        <li>⏱️ Timeline and resource constraints</li>
+                        <li>🔧 Operational maintenance burden</li>
+                    </ul>
+
+                    <h4>Balanced view:</h4>
+                    <p>Each approach is evaluated not just on technical merit, but on how it impacts your entire organization.</p>
+                `
+            },
+            logic: {
+                title: "🧠 Logic - Sound Reasoning",
+                content: `
+                    <p><strong>What it means:</strong> Our recommendations follow a clear, logical progression from evidence to conclusion with no gaps in reasoning.</p>
+
+                    <h4>Our logical framework:</h4>
+                    <ol>
+                        <li>📊 Current state assessment (JSP dependency problem)</li>
+                        <li>🎯 Goal definition (REST APIs for React)</li>
+                        <li>🔍 Approach identification (6 viable options)</li>
+                        <li>📈 Evidence gathering (case studies, metrics)</li>
+                        <li>⚖️ Comparative analysis (pros, cons, risks)</li>
+                        <li>✅ Recommendation (Service Layer Extraction)</li>
+                    </ol>
+
+                    <h4>Logical validation:</h4>
+                    <p>Each step builds on the previous, with clear cause-and-effect relationships and no logical leaps.</p>
+                `
+            },
+            fairness: {
+                title: "⚖️ Fairness - Objective Evaluation",
+                content: `
+                    <p><strong>What it means:</strong> We present all approaches objectively, acknowledging both strengths and weaknesses without bias toward any particular solution.</p>
+
+                    <h4>Ensuring objectivity:</h4>
+                    <ul>
+                        <li>✅ Equal analysis depth for all approaches</li>
+                        <li>📊 Consistent evaluation criteria applied</li>
+                        <li>🔍 Both successes and failures documented</li>
+                        <li>💭 Assumptions clearly stated</li>
+                    </ul>
+
+                    <h4>No hidden agenda:</h4>
+                    <p>Even our recommended approach (Service Layer Extraction) includes clear warnings about complexity and required expertise. We present what's best for you, not what's easiest to sell.</p>
+                `
+            },
+            significance: {
+                title: "❗ Significance - Focus on What Matters",
+                content: `
+                    <p><strong>What it means:</strong> We emphasize the most important factors for your specific modernization goals, not generic best practices.</p>
+
+                    <h4>How we ensure significance:</h4>
+                    <ul>
+                        <li>✅ Prioritizing customer-stated pain points (JSP maintenance)</li>
+                        <li>✅ Highlighting critical success factors</li>
+                        <li>✅ Focusing on business impact over technical elegance</li>
+                        <li>✅ Addressing the "why" before the "how"</li>
+                    </ul>
+
+                    <h4>Example in our analysis:</h4>
+                    <p>We immediately addressed the customer's July 18 concern about "maintaining JSPs forever" and structured our entire recommendation around eliminating this burden.</p>
+                `
+            },
+            completeness: {
+                title: "✨ Completeness - The Full Picture",
+                content: `
+                    <p><strong>What it means:</strong> Every viable approach is considered, from quick tactical fixes to strategic transformations.</p>
+
+                    <h4>How we ensure completeness:</h4>
+                    <ul>
+                        <li>✅ Six distinct modernization approaches analyzed</li>
+                        <li>✅ Timeline ranges from 2 months to 2 years</li>
+                        <li>✅ Risk profiles from conservative to innovative</li>
+                        <li>✅ Including AI-powered modern solutions</li>
+                    </ul>
+
+                    <h4>Example in our analysis:</h4>
+                    <p>We didn't just recommend our preferred approach - we presented all six options with honest assessments, letting you choose based on your constraints.</p>
+                `
+            },
+            consistency: {
+                title: "🔄 Consistency - Uniform Standards Applied",
+                content: `
+                    <p><strong>What it means:</strong> The same evaluation criteria and depth of analysis applied to every approach, preventing bias.</p>
+
+                    <h4>How we ensure consistency:</h4>
+                    <ul>
+                        <li>✅ Same 5-factor scoring matrix for all approaches</li>
+                        <li>✅ Equal detail in pros and cons analysis</li>
+                        <li>✅ Market examples provided for each option</li>
+                        <li>✅ Risk assessments using same scale</li>
+                    </ul>
+
+                    <h4>Example in our analysis:</h4>
+                    <p>Whether discussing HTML Scraping or Agentic SDLC, we apply the same rigorous evaluation framework and provide comparable levels of detail.</p>
+                `
+            },
+            sufficiency: {
+                title: "📏 Sufficiency - Adequate Evidence Provided",
+                content: `
+                    <p><strong>What it means:</strong> Providing enough evidence, examples, and rationale for stakeholders to make informed decisions.</p>
+
+                    <h4>How we ensure sufficiency:</h4>
+                    <ul>
+                        <li>✅ Real company case studies for validation</li>
+                        <li>✅ Specific timeline and cost estimates</li>
+                        <li>✅ Technical implementation details</li>
+                        <li>✅ Decision questionnaire for self-assessment</li>
+                    </ul>
+
+                    <h4>Example in our analysis:</h4>
+                    <p>We don't just say "Service Extraction is recommended" - we provide phased implementation plans, specific timelines, risk mitigation strategies, and success metrics.</p>
+                `
+            }
+        };
+
+        function showStandardDetail(standard) {
+            const modal = document.getElementById('standardModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalContent = document.getElementById('modalContent');
+
+            if (standardDetails[standard]) {
+                modalTitle.innerHTML = standardDetails[standard].title;
+                modalContent.innerHTML = standardDetails[standard].content;
+                modal.style.display = 'block';
+            }
+        }
+
+        function closeStandardModal() {
+            document.getElementById('standardModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside of it or on the X button
+        window.onclick = function(event) {
+            const modal = document.getElementById('standardModal');
+            if (event.target == modal) {
+                closeStandardModal();
+            }
+        }
+        
+        // Also allow clicking on modal content background to close
+        document.getElementById('standardModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeStandardModal();
+            }
+        });
+    </script>
+</body>
+</html>
